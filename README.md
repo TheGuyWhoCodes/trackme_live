@@ -4,3 +4,5 @@ https://opensource.com/article/20/1/object-tracking-camera-raspberry-pi - good a
 https://www.tensorflow.org/hub/tutorials/object_detection - link to Tensorflow Object Detection tutorial that uses the TensorFlow Object Detection API talked about in the above article
 
 https://github.com/tensorflow/models/tree/master/research/object_detection#nov-13th-2019 - TensorFlow Object Detection API
+
+https://www.tensorflow.org/hub/tutorials/tf2_object_detection - another Tensorflow tutorial using the TensorFlow Object Detection API
