@@ -127,10 +127,6 @@
   },
   "defaultProject": "trackme-webui",
   "cli": {
-<<<<<<< Updated upstream
-    "analytics": "c669dc51-e1ef-4c48-b582-76daf0d3c970"
-=======
     "analytics": false
->>>>>>> Stashed changes
   }
 }
