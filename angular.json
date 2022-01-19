@@ -123,6 +123,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "trackme-webui"
+    }
+  },
+  "defaultProject": "trackme-webui",
+  "cli": {
+    "analytics": "f3acc7e3-bdc6-46ff-9b0c-f4047ec4cfb5"
+  }
 }

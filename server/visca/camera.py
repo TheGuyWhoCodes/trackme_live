@@ -474,3 +474,5 @@ class D100(Camera):
         :rtype: bool
         """
         return self.comm('8101046308FF')
+    def zoom(self):
+        return self.comm('810472PFF')
