@@ -34,29 +34,17 @@ def handle_state(message):
 		return	
 
 	if(message['direction'] == "up"):
-		camera.Connection.up(amount=10)
+		camera.Connection.up(amount=15)
 	elif(message['direction'] == "down"):
-		camera.Connection.down(amount=10)
+		camera.Connection.down(amount=15)
 	elif(message['direction'] == "left"):
-		camera.Connection.left(amount=10)
+		camera.Connection.left(amount=15)
 	elif(message['direction'] == "right"):
-		camera.Connection.right(amount=10)
+		camera.Connection.right(amount=15)
 	elif(message['direction'] == "stop"):
 		camera.Connection.stop()
 	
-	camera.Connection.stop()
-	socketio.emit({ 'text':'Command = change_state => {}'.format(message)})
-
-
-
-@socketio.on('get_active_com')
-def handle_active_com_devices(message):
-	""" handle_active_com_devices returns a list of COM devices that could be 
-		the VISCA camera that will be needed.
-	"""
-	socketio.emit('server2web',{ 'text':'{}'.format(serial_ports())}, namespace='/web')
-
-## TODO: We need to get active camera devices next lol
+	socketio.emit('change_state', { 'text':'Command = change_state => {}'.format(message)})
 
 
 @socketio.on('create_camera')
@@ -64,8 +52,9 @@ def create_visca_camera(message):
 	""" create_visca_camera will create a VISCA camera connection using a serial port
 	and camera connection.
 	"""
+	print(message['camera'])
 	try:
-		camera.init_camera(message)
+		camera.init_camera(message['camera'], message['port'])
 	except:
 		# TODO: throw something here
 		return None
@@ -82,24 +71,29 @@ def destroy_visca_camera(message):
 		return None
 
 
-
+@socketio.on('get_active_com_devices')
+def get_active_com_devices():
+	""" get_active_com_devices returns a list of COM devices that could be 
+		the VISCA camera that will be needed.
+	"""
+	socketio.emit('get_active_com_devices',{ 'text':'{}'.format(serial_ports())})
 
 @socketio.on('get_active_com_port')
 def get_active_com_port():
 	""" get_active_com_port returns the active VISCA COM port used in the software
 	"""
 	if camera.Connection is None:
-		socketio.emit('server2web', {'status':'Serial connection with camera not established'})
+		socketio.emit('get_active_com_port', {'status':'Serial connection with camera not established'})
 		return
-	socketio.emit('server2web', {'text':'{}'.format(camera.Connection._output_string)})
+	socketio.emit('get_active_com_port', {'text':'{}'.format(camera.Connection._output_string)})
 
 @socketio.on('set_active_com_port')
 def set_active_com_port(message):
 	try:
-		camera.update_com_port(message)
-	except:
-		return None
-
+		camera.update_com_port(message["port"])
+		socketio.emit('set_active_com_port', {'status': 'Successfully updated the camera to {}'.format(message['port'])})
+	except Exception as err:
+		socketio.emit('set_active_com_port', {'status': 'Unable to update port: {}'.format(err)})
 
 
 @socketio.on('get_active_video_port')
@@ -107,9 +101,9 @@ def get_active_video_port():
 	""" get_active_com_port returns the active VISCA COM port used in the software
 	"""
 	if camera.Video == None:
-		socketio.emit('server2web', {'status':'Video connection with camera not established'})
+		socketio.emit('get_active_video_port', {'status':'Video connection with camera not established'})
 		return
-	socketio.emit('server2web', {'text':'{}'.format(camera.VideoSrc)})
+	socketio.emit('get_active_video_port', {'text':'{}'.format(camera.VideoSrc)})
 
 @socketio.on('set_active_video_port')
 def set_active_video_port(message):
@@ -118,7 +112,9 @@ def set_active_video_port(message):
 	except:
 		return None
 
-
+@socketio.on('get_available_video_ports')
+def get_available_video_ports():
+	socketio.emit('get_available_video_ports', {'status':'{}'.format(generate_camera_ports())})
 
 @app.route('/video_feed')
 def video_feed():
@@ -135,6 +131,25 @@ def serial_ports():
 	arr = []
 	for p in ports:
 		arr.append(p.device)
+	return arr
+
+def generate_camera_ports():
+	""" generate_camera_ports() will generate the integer port numbers needed to activate a
+	camera, this does not account for ports already in use, this should be caught in an error
+	when creating / updating the camera stream
+	returns: list of integers 0...x , returns [] if no cameras
+	"""
+	index = 0
+	arr = []
+	while True:
+		cap = cv2.VideoCapture(index)
+		if not cap.read()[0]:
+			break
+		else:
+			arr.append(index)
+		cap.release()
+		index += 1
+
 	return arr
 
 def generate_stream():
