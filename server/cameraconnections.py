@@ -39,17 +39,17 @@ class VISCACamera:
 			self.Connection = camera.D100(output=connection)
 			self.Connection.init()
 			self.Connection.home()
-		except:
+		except Exception as err:
 			self.Connection = None
-			# TODO: Throw something here so the UI can be pretty
+			raise Exception(err)
 		
 	def stop_camera_instance(self):
 		""" stop_camera_instance stops the serial connection and also camera connection
 			to free up for use later.
 		"""
-		self.Connection.close(self.Connection._output_string)
+		if not self.Connection.close(self.Connection._output_string):
+			raise Exception("Unable to stop serial interface with VISCA")
 		self.Video.stop()
-		return None
 	
 	def update_com_port(self, port):
 		print(self.Connection._output_string)
@@ -60,7 +60,6 @@ class VISCACamera:
 			self.Connection.home()
 		except Exception as err:
 			self.Connection = None
-			# TODO: Throw something here so the UI can be pretty
 			raise Exception(err)
 
 	def update_camera(self, port):
