@@ -28,7 +28,6 @@ def disconnect_web():
 @socketio.on('change_state')
 def handle_state(message):
 	print('[INFO] Web client {}: Command = change_state => {}'.format(request.sid, message))
-	
 	if camera.Connection == None:
 		socketio.emit('server2web',{ 'text':'Unable to move camera, not initalized'}, namespace='/web')
 		return	
@@ -52,12 +51,10 @@ def create_visca_camera(message):
 	""" create_visca_camera will create a VISCA camera connection using a serial port
 	and camera connection.
 	"""
-	print(message['camera'])
 	try:
 		camera.init_camera(message['camera'], message['port'])
-	except:
-		# TODO: throw something here
-		return None
+	except Exception as err:
+		socketio.emit('create_camera', {'status':'{}'.format(err)})
 
 @socketio.on('destroy_camera')
 def destroy_visca_camera(message):
@@ -66,9 +63,8 @@ def destroy_visca_camera(message):
 	"""
 	try:
 		camera.stop_camera_instance()
-	except:
-		# TODO: throw something here
-		return None
+	except Exception as err:
+		socketio.emit('destroy_camera', {'status':'{}'.format(err)})
 
 
 @socketio.on('get_active_com_devices')
@@ -76,7 +72,7 @@ def get_active_com_devices():
 	""" get_active_com_devices returns a list of COM devices that could be 
 		the VISCA camera that will be needed.
 	"""
-	socketio.emit('get_active_com_devices',{ 'text':'{}'.format(serial_ports())})
+	socketio.emit('get_active_com_devices',{ 'status':'{}'.format(serial_ports())})
 
 @socketio.on('get_active_com_port')
 def get_active_com_port():
@@ -85,7 +81,7 @@ def get_active_com_port():
 	if camera.Connection is None:
 		socketio.emit('get_active_com_port', {'status':'Serial connection with camera not established'})
 		return
-	socketio.emit('get_active_com_port', {'text':'{}'.format(camera.Connection._output_string)})
+	socketio.emit('get_active_com_port', {'status':'{}'.format(camera.Connection._output_string)})
 
 @socketio.on('set_active_com_port')
 def set_active_com_port(message):
@@ -103,7 +99,7 @@ def get_active_video_port():
 	if camera.Video == None:
 		socketio.emit('get_active_video_port', {'status':'Video connection with camera not established'})
 		return
-	socketio.emit('get_active_video_port', {'text':'{}'.format(camera.VideoSrc)})
+	socketio.emit('get_active_video_port', {'status':'{}'.format(camera.VideoSrc)})
 
 @socketio.on('set_active_video_port')
 def set_active_video_port(message):
