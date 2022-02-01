@@ -16,7 +16,6 @@ class VISCACamera:
 	def __init__(self):
 		# Video stream
 		# Temp Debug Mode: Init with webcam 0
-		self.Video = VideoStream(src=0).start()
 		# self.Video	= None
 		# Connection stream
 		self.Connection = None
@@ -29,7 +28,7 @@ class VISCACamera:
 			connection: The connection name of the serial port we will use
 					examples of this include COM3 or /dev/ttyl3
 		"""
-		self.Video = VideoStream(src=video).start()
+		self.Video = VideoStream(src=int(video)).start()
 		self.VideoSrc = video
 		# Init Camera object (Default COM4). This probably won't connect
 		# and most likely we will need to not initalize it until we see what the user
@@ -53,14 +52,17 @@ class VISCACamera:
 		return None
 	
 	def update_com_port(self, port):
-		self.Connection.close(self.Connection._output_string)
+		print(self.Connection._output_string)
+		print("status:", self.Connection.close(self.Connection._output))
 		try:
 			self.Connection = camera.D100(output=port)
 			self.Connection.init()
 			self.Connection.home()
-		except:
+		except Exception as err:
 			self.Connection = None
 			# TODO: Throw something here so the UI can be pretty
+			raise Exception(err)
+
 	def update_camera(self, port):
 		if self.Video != None:
 			self.Video.stop()
