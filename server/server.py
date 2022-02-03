@@ -53,17 +53,19 @@ def create_visca_camera(message):
 	"""
 	try:
 		camera.init_camera(message['camera'], message['port'])
+		socketio.emit("create_camera", {'status': 'Successfully created cameras!', 'camera': message['camera'], 'port': message['port']})
 	except Exception as err:
 		socketio.emit('create_camera', {'status':'{}'.format(err)})
 
 @socketio.on('destroy_camera')
-def destroy_visca_camera(message):
-	""" destroy_visca_camera will create a VISCA camera connection using a serial port
-	and camera connection.
+def destroy_visca_camera():
+	""" destroy_visca_camera will destroy the camera interface, prepping it for another connection later
 	"""
+	print("hello worldddddddddd")
 	try:
 		camera.stop_camera_instance()
 	except Exception as err:
+		print(err)
 		socketio.emit('destroy_camera', {'status':'{}'.format(err)})
 
 
@@ -89,7 +91,7 @@ def set_active_com_port(message):
 		camera.update_com_port(message["port"])
 		socketio.emit('set_active_com_port', {'status': 'Successfully updated the camera to {}'.format(message['port'])})
 	except Exception as err:
-		socketio.emit('set_active_com_port', {'status': 'Unable to update port: {}'.format(err)})
+		socketio.emit('set_active_com_port', {'status': 'Unable to update port: {}'.format(err), 'success' : False})
 
 
 @socketio.on('get_active_video_port')
@@ -107,6 +109,10 @@ def set_active_video_port(message):
 		camera.update_camera(message)
 	except:
 		return None
+
+@socketio.on('get_active_video_and_com_port')
+def get_active_video_and_com_port():
+	socketio.emit("create_camera", {'camera': camera.VideoSrc, 'port': camera.Connection._output_string})
 
 @socketio.on('get_available_video_ports')
 def get_available_video_ports():
