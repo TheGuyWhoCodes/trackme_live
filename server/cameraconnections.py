@@ -47,9 +47,11 @@ class VISCACamera:
 		""" stop_camera_instance stops the serial connection and also camera connection
 			to free up for use later.
 		"""
-		if not self.Connection.close(self.Connection._output_string):
+		if not self.Connection.close(self.Connection._output):
 			raise Exception("Unable to stop serial interface with VISCA")
 		self.Video.stop()
+		self.Connection = None
+		self.Video = None
 	
 	def update_com_port(self, port):
 		print(self.Connection._output_string)
