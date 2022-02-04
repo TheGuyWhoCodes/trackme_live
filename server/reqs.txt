@@ -1,6 +1,10 @@
 flask
-flask-socketio
+flask-socketio==4.3.1
 eventlet
 opencv-python
 serial
 scipy
+pyserial
+imutils
+python-socketio==4.6.0
+python-engineio==3.13.2
