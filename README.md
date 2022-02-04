@@ -1,8 +1,28 @@
 # trackme_live
-https://opensource.com/article/20/1/object-tracking-camera-raspberry-pi - good article I found, closest article I could find to what we are trying to accomplish. From reading this article, I actually now don't think we need to BUILD OUR OWN deep learning model that tracks the person speaking Instead, we can use and object-detection model (like MobileNetV3-SSD) to do the person tracking for us, and then edit it to our needs.
+## TrackmeWebui
 
-https://www.tensorflow.org/hub/tutorials/object_detection - link to Tensorflow Object Detection tutorial that uses the TensorFlow Object Detection API talked about in the above article
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.4.
 
-https://github.com/tensorflow/models/tree/master/research/object_detection#nov-13th-2019 - TensorFlow Object Detection API
+## Development server
 
-https://www.tensorflow.org/hub/tutorials/tf2_object_detection - another Tensorflow tutorial using the TensorFlow Object Detection API
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+## Code scaffolding
+
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+
+## Build
+
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+
+## Running unit tests
+
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+
+## Running end-to-end tests
+
+Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+
+## Further help
+
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
