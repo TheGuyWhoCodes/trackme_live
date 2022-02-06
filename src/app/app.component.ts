@@ -21,6 +21,7 @@ export class AppComponent {
 	debugMode = false
 	availableCom = []
 	availableVideo = []
+	availableCameras = []
 	constructor(private socket: Socket, private modalService: NgbModal) {}
 	ngOnInit() {
 		this.socket = io.connect("http://localhost:4001")
@@ -46,10 +47,15 @@ export class AppComponent {
 		this.socket.on("get_active_video_and_com_port", (message) => {
 			this.updateCameraStatus(message)
 		})
+		this.socket.on("get_usb_camera_names", (message) => {
+			console.log(message)
+			this.availableCameras = message['status']
+		})
 		// Grab any active devices
 		this.socket.emit("get_active_com_devices")
 		this.socket.emit("get_available_video_ports")
 		this.socket.emit("get_active_video_and_com_port")
+		this.socket.emit("get_usb_camera_names")
   	}
 
 	@HostListener('document:keypress', ['$event'])

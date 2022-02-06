@@ -8,6 +8,7 @@ import serial.tools.list_ports
 import sys
 
 from cameraconnections import VISCACamera
+from pygrabber.dshow_graph import FilterGraph
 
 # Init Flask Instances
 app = Flask(__name__)
@@ -117,6 +118,11 @@ def get_active_video_and_com_port():
 @socketio.on('get_available_video_ports')
 def get_available_video_ports():
 	socketio.emit('get_available_video_ports', {'status':'{}'.format(generate_camera_ports())})
+
+@socketio.on('get_usb_camera_names')
+def get_usb_camera_names():
+	graph = FilterGraph()
+	socketio.emit('get_usb_camera_names', {'status':'{}'.format(graph.get_input_devices())})
 
 @app.route('/video_feed')
 def video_feed():
