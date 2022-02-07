@@ -134,7 +134,6 @@ def get_usb_camera_names(message):
 	for camera_index_str in camera_indexes_str:
 		camera_index = int(camera_index_str)
 		camera_indexes.append(camera_index)
-	print(camera_indexes)
 	if len(camera_indexes) > 0:
 		platform_name = platform.system()
 		if platform_name == 'Windows':
