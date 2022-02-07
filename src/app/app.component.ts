@@ -35,6 +35,7 @@ export class AppComponent {
 		this.socket.on("get_available_video_ports", (message) => {
 			console.log(message)
 			this.availableVideo = message['status']
+			this.socket.emit("get_usb_camera_names", {"availableVideo": this.availableVideo})
 		})
 		
 		this.socket.on("create_camera", (message) => {
@@ -55,7 +56,6 @@ export class AppComponent {
 		this.socket.emit("get_active_com_devices")
 		this.socket.emit("get_available_video_ports")
 		this.socket.emit("get_active_video_and_com_port")
-		this.socket.emit("get_usb_camera_names")
   	}
 
 	@HostListener('document:keypress', ['$event'])

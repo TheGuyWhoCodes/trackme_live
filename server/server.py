@@ -8,7 +8,11 @@ import serial.tools.list_ports
 import sys
 
 from cameraconnections import VISCACamera
-from pygrabber.dshow_graph import FilterGraph
+import asyncio
+import platform
+import subprocess
+if platform.system() == 'Windows':
+	from pygrabber.dshow_graph import FilterGraph
 
 # Init Flask Instances
 app = Flask(__name__)
@@ -120,9 +124,20 @@ def get_available_video_ports():
 	socketio.emit('get_available_video_ports', {'status':'{}'.format(generate_camera_ports())})
 
 @socketio.on('get_usb_camera_names')
-def get_usb_camera_names():
-	graph = FilterGraph()
-	socketio.emit('get_usb_camera_names', {'status':'{}'.format(graph.get_input_devices())})
+def get_usb_camera_names(message):
+	cameras = []
+	camera_indexes = message["availableVideo"]
+	if len(camera_indexes) > 0:
+		platform_name = platform.system()
+		if platform_name == 'Windows':
+			graph = FilterGraph()
+			cameras = graph.get_input_devices()
+		if platform_name == 'Linux':
+			for camera_index in camera_indexes:
+				camera_name = subprocess.run(['cat', '/sys/class/video4linux/video{}/name'.format(camera_index)], stdout=subprocess.PIPE).stdout.decode('utf-8')
+				camera_name = camera_name.replace('\n', '')
+				cameras.append(camera_names)
+	socketio.emit('get_usb_camera_names', {'status':'{}'.format(cameras)})
 
 @app.route('/video_feed')
 def video_feed():

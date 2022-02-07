@@ -8,4 +8,4 @@ pyserial
 imutils
 python-socketio==4.6.0
 python-engineio==3.13.2
-pygrabber
+pygrabber; sys_platform == "win32"
