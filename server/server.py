@@ -143,7 +143,7 @@ def get_usb_camera_names(message):
 			for camera_index in camera_indexes:
 				camera_name = subprocess.run(['cat', '/sys/class/video4linux/video{}/name'.format(camera_index)], stdout=subprocess.PIPE).stdout.decode('utf-8')
 				camera_name = camera_name.replace('\n', '')
-				cameras.append(camera_names)
+				cameras.append(camera_name)
 	socketio.emit('get_usb_camera_names', {'status':'{}'.format(cameras)})
 
 @app.route('/video_feed')
