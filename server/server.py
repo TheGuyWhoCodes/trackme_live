@@ -126,7 +126,15 @@ def get_available_video_ports():
 @socketio.on('get_usb_camera_names')
 def get_usb_camera_names(message):
 	cameras = []
-	camera_indexes = message["availableVideo"]
+	camera_indexes_str = message["availableVideo"]
+	camera_indexes_str = camera_indexes_str.replace('[', '')
+	camera_indexes_str = camera_indexes_str.replace(']', '')
+	camera_indexes_str = camera_indexes_str.split()
+	camera_indexes = []
+	for camera_index_str in camera_indexes_str:
+		camera_index = int(camera_index_str)
+		camera_indexes.append(camera_index)
+	print(camera_indexes)
 	if len(camera_indexes) > 0:
 		platform_name = platform.system()
 		if platform_name == 'Windows':
