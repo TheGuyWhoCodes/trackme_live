@@ -4,38 +4,78 @@
 	<strong>Oh no!</strong> You aren't connected to the backend service.
 </div>
 
-<button *ngIf = "comPort == null || cameraPort == null" type="button" class="btn btn-secondary" (click)="open(content)">Add Camera <i class="fas fa-plus"></i></button>
-<h6>Current Camera: {{cameraPort ? cameraPort : "None Selected"}}</h6>
-<h6>Current Serial Port: {{comPort ? comPort : "None Selected"}}</h6>
-
-<div class="custom-control custom-switch">
-	<input #debugSwitch type="checkbox" class="custom-control-input" id="debugSwitch" [checked]="debugMode" (change)="toggleDebugMode(debugSwitch.checked)">
-	<label class="custom-control-label" for="debugSwitch">Debug Mode</label>
-</div>
-
-<div ngbDropdown container="body"  *ngIf = "comPort != null && cameraPort != null"  >
-	<button class="btn  btn-secondary btn-sm" ngbDropdownToggle>Settings <i class="fas fa-cog"></i></button>
-	<div ngbDropdownMenu>
-		<h6 class="dropdown-header">Settings</h6>
-		<button ngbDropdownItem (click)="refreshSerial()">Refresh Serial Ports</button>
-		<button ngbDropdownItem (click)="refreshVideoPorts()">Refresh Camera Ports</button>
-		<div class="dropdown-divider"></div>
-		<button ngbDropdownItem (click)="destroyCamera()">Disconnect from Camera</button>
-	</div>
-</div>
 
 <div class="row">
     <div class="col">
-		<!-- <img style="-webkit-user-select: none;margin: auto;background-color: hsl(0, 0%, 25%);" src="http://localhost:4001/video_feed"> -->
+		<button *ngIf = "comPort == null || cameraPort == null" type="button" class="btn btn-secondary" (click)="open(content)">Add Camera <i class="fas fa-plus"></i></button>
+		<div class = "selected">
+			<h6>Current Camera: {{cameraPort ? "Camera " + cameraPort : "None Selected"}}</h6>
+			<h6>Current Serial Port: {{comPort ? comPort : "None Selected"}}</h6>
+		</div>
+
+		<div class="custom-control custom-switch">
+			<input #debugSwitch type="checkbox" class="custom-control-input" id="debugSwitch" [checked]="debugMode" (change)="toggleDebugMode(debugSwitch.checked)">
+			<label class="custom-control-label" for="debugSwitch">Debug Mode</label>
+		</div>
+		<h2>stream should go here</h2>
     </div>
     <div class="col">
-		<div *ngIf="debugMode">
-			<button (click)="connectToCamera()">Hello Connect!</button><br>
-			<button (click)="setActiveCOMPort()">Cause Test Exception!</button>
+		<div ngbDropdown class = "settings-dropdown" container="body"  *ngIf = "comPort != null && cameraPort != null"  >
+			<button class="btn  btn-secondary btn-sm" ngbDropdownToggle>Settings <i class="fas fa-cog"></i></button>
+			<div ngbDropdownMenu>
+				<h6 class="dropdown-header">Settings</h6>
+				<button ngbDropdownItem (click)="refreshSerial()">Refresh Available Serial Ports</button>
+				<button ngbDropdownItem (click)="refreshVideoPorts()">Refresh Available Camera Ports</button>
+				<button ngbDropdownItem (click) = "resetCameraConnection()">Refresh COM Connection</button>
+				<div class="dropdown-divider"></div>
+				<button ngbDropdownItem (click)="destroyCamera()">Disconnect from Camera</button>
+			</div>
+		</div>
+		<div class = "controls">
+			<div class = "control button-controls">
+				<h4>Button Control</h4>
+				buttons should go here
+			</div>
+			<div class = "control joystick">
+				<h4>JoyStick Control</h4>
+				joystick should go here
 
+			</div>
+			<div class = "control zoom">
+				<h4>Zoom Slider</h4>
+				zoom slider should go here
+			</div>
+			<div class = "control control-cluster">
+				<h4>Camera Controls</h4>
+				<div class="container">
+					<div class="row">
+						<div class="col-sm">
+							<button type="button" class="btn btn-primary">Camera Home</button>
+						</div>
+						<div class="col-sm">
+							<button type="button" class="btn btn-primary">Reset Camera</button>
+						</div>
+						<div class="col-sm">
+							<button type="button" class="btn btn-primary">Stop Camera</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class = "debug-panel" *ngIf="debugMode">
+			<h5>Debug Panel</h5>
+			<div *ngIf="debugMode">
+				<button (click)="connectToCamera()">Hello Connect!</button><br>
+				<button (click)="setActiveCOMPort()">Cause Test Exception!</button>
+			</div>
+
+			<label for="debug-messages">Debug Messages</label>
+			<textarea #debugArea class="form-control" id="debug-messages" rows="3"></textarea>
 		</div>
 	</div>
 </div>
+
+
 
 <ng-template #content let-modal>
 	<div class="modal-header">
@@ -48,14 +88,14 @@
 	  <form>
 		<div class="form-group">
 		  <label for="visca-serial-port">VISCA Serial Port</label>
-		  <select class="form-select" aria-label="Default select example">
+		  <select class="form-select" aria-label="VISCA Selection">
 			<option *ngFor="let com of availableCom; let i = index" [value]="availableCom[i]">
 				{{com}}
 			</option>
 		  </select>
 		  <br>
 		  <label for="visca-camera-port">VISCA Camera Port</label>
-		  <select class="form-select" aria-label="Default select example">
+		  <select class="form-select" aria-label="Camera Selection">
 				<option *ngFor="let camera of availableVideo; let i = index" [value]="availableVideo[i]">
 					{{camera}}
 				</option>

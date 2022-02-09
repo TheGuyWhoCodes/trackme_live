@@ -84,6 +84,12 @@ def get_available_com_devices():
 	ret['status'] = serial_ports()
 	socketio.emit('get_available_com_devices', ret)
 
+@socketio.on("refresh_active_com_port")
+def refresh_active_com_port():
+	if camera.Connection is not None:
+		camera.Connection.cancel()
+		camera.Connection.reset()
+
 @socketio.on('get_active_com_port')
 def get_active_com_port():
 	""" get_active_com_port returns the active VISCA COM port used in the software
