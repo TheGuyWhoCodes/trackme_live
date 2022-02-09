@@ -1,6 +1,7 @@
 import { Component, HostListener, Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 import * as io from 'socket.io-client';
+import { create as nipplejsCreate } from 'nipplejs';
 
 
 @Component({
@@ -20,6 +21,13 @@ export class AppComponent {
 	  this.socket.on("connect", () => {
 		console.log("Successfully connected!")
 	})
+    let options = {
+        zone: document.getElementById('zone_joystick'),
+        color: "blue",
+        mode: "static" as "dynamic" | "semi" | "static",
+        position: {left: "50%", bottom: "50%" }
+    }
+    let manager = nipplejsCreate(options);
   }
   @HostListener('document:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
