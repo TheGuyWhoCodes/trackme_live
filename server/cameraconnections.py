@@ -20,7 +20,7 @@ class VISCACamera:
 		# Connection stream
 		self.Connection = None
 		self.VideoSrc = None
-
+		self.Video = None
 	def init_camera(self, video, connection):
 		""" init_camera will initalize BOTH the camera feed and serial feed
 
@@ -28,8 +28,6 @@ class VISCACamera:
 			connection: The connection name of the serial port we will use
 					examples of this include COM3 or /dev/ttyl3
 		"""
-		self.Video = VideoStream(src=int(video)).start()
-		self.VideoSrc = video
 		# Init Camera object (Default COM4). This probably won't connect
 		# and most likely we will need to not initalize it until we see what the user
 		# chooses, but for right now this is it. Maybe if we add more cameras, we
@@ -39,8 +37,13 @@ class VISCACamera:
 			self.Connection = camera.D100(output=connection)
 			self.Connection.init()
 			self.Connection.home()
+
+			self.Video = VideoStream(src=int(video)).start()
+			self.VideoSrc = video
 		except Exception as err:
 			self.Connection = None
+			self.Video = None
+			self.VideoSrc = None
 			raise Exception(err)
 		
 	def stop_camera_instance(self):
@@ -52,6 +55,7 @@ class VISCACamera:
 		self.Video.stop()
 		self.Connection = None
 		self.Video = None
+		self.VideoSrc = None
 	
 	def update_com_port(self, port):
 		print(self.Connection._output_string)

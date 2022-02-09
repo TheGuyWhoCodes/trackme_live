@@ -21,23 +21,30 @@ export class AppComponent {
 	debugMode = false
 	availableCom = []
 	availableVideo = []
+	connected = false
 	constructor(private socket: Socket, private modalService: NgbModal) {}
 	ngOnInit() {
 		this.socket = io.connect("http://localhost:4001")
 		this.socket.on("connect", () => {
 			console.log("Successfully connected!")
+			this.connected = true
 		})
-		this.socket.on("get_active_com_devices", (message) => {
+		this.socket.on("disconnect", () => {
+			console.log("Disconnected from service!")		
+			this.connected = false	
+		})
+		this.socket.on("get_available_com_devices", (message) => {
 			console.log(message)
 			this.availableCom = message['status']
 		})
 		this.socket.on("get_available_video_ports", (message) => {
 			console.log(message)
-			this.availableVideo = message['status']
+			this.availableVideo = JSON.parse(message['status'])
 		})
 		
 		this.socket.on("create_camera", (message) => {
 			this.updateCameraStatus(message)
+			console.log(message)
 		})
 
 		this.socket.on("set_active_com_port", (message) => {
@@ -45,17 +52,16 @@ export class AppComponent {
 		})
 		this.socket.on("get_active_video_and_com_port", (message) => {
 			this.updateCameraStatus(message)
+			console.log("State change in camera: ", message)
 		})
 		// Grab any active devices
-		this.socket.emit("get_active_com_devices")
+		this.socket.emit("get_available_com_devices")
 		this.socket.emit("get_available_video_ports")
 		this.socket.emit("get_active_video_and_com_port")
   	}
 
 	@HostListener('document:keypress', ['$event'])
 	handleKeyboardEvent(event: KeyboardEvent) {
-
-
 		this.key = event.key;
 		if(event.key == "w") {
 			this.socket.emit('change_state',{'direction':'up'})
@@ -78,7 +84,7 @@ export class AppComponent {
 	}
 
 	connectToCamera() {
-		this.socket.emit("create_camera", {"camera": '0', "port":"COM4"})
+		this.socket.emit("create_camera", {"camera": '0', "port":"COM6"})
 	}
 
 	setActiveCOMPort() {
@@ -104,5 +110,13 @@ export class AppComponent {
 		this.socket.emit("destroy_camera")
 		this.cameraPort = null
 		this.comPort = null
+	}
+
+	public refreshSerial() {
+		this.socket.emit("get_available_video_ports")
+	}
+	
+	public refreshVideoPorts() {
+		this.socket.emit("get_available_video_ports")
 	}
 }
