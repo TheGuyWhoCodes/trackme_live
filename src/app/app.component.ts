@@ -43,6 +43,7 @@ export class AppComponent {
 		this.socket.on("get_available_video_ports", (message) => {
 			this.addToDebugArea(message)
 			this.availableVideo = JSON.parse(message['status'])
+			this.socket.emit("get_usb_camera_names", {"availableVideo": this.availableVideo})
 		})
 
 		this.socket.on("change_state", (message) => {
