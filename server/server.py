@@ -13,9 +13,10 @@ import asyncio
 import platform
 import subprocess
 if platform.system() == 'Windows':
-	from pygrabber.dshow_graph import FilterGraph
+	import winrt.windows.devices.enumeration as windows_devices
 
 from threading import Thread
+	
 # Init Flask Instances
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -153,13 +154,15 @@ def get_usb_camera_names(message):
 	if len(camera_indexes) > 0:
 		platform_name = platform.system()
 		if platform_name == 'Windows':
-			graph = FilterGraph()
-			cameras = graph.get_input_devices()
+			cameras_info_windows = asyncio.run(get_camera_information_for_windows())
+			for camera_index in camera_indexes:
+				camera_name = cameras_info_windows.get_at(camera_index).name.replace('\n', '')
+				cameras.append({'camera_index': camera_index, 'camera_name': camera_name})
 		if platform_name == 'Linux':
 			for camera_index in camera_indexes:
 				camera_name = subprocess.run(['cat', '/sys/class/video4linux/video{}/name'.format(camera_index)], stdout=subprocess.PIPE).stdout.decode('utf-8')
 				camera_name = camera_name.replace('\n', '')
-				cameras.append(camera_name)
+				cameras.append({'camera_index': camera_index, 'camera_name': camera_name})
 	socketio.emit('get_usb_camera_names', {'status':'{}'.format(cameras)})
 
 @app.route('/video_feed')
@@ -213,7 +216,9 @@ def generate_stream(out_q):
 		yield (b'--frame\r\n'
 				b'Content-Type: image/jpeg\r\n\r\n' + currFrame + b'\r\n')
 
-
+async def get_camera_information_for_windows():
+	VIDEO_DEVICES = 4
+	return await windows_devices.DeviceInformation.find_all_async(VIDEO_DEVICES)
 
 if __name__ == "__main__":
 	print('[INFO] Starting server at http://localhost:4001')
