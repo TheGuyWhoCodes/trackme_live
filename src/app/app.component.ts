@@ -1,7 +1,6 @@
 import { Component, ElementRef, HostListener, Injectable, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Socket } from 'ngx-socket-io';
-import { JoystickEvent, NgxJoystickComponent } from 'ngx-joystick';
 import * as io from 'socket.io-client';
 
 
@@ -93,26 +92,6 @@ export class AppComponent {
 	@HostListener('document:keyup', ['$event'])
 	handleStopCommand(event: KeyboardEvent) {
 		this.socket.emit('change_state',{'direction':'stop'})			  
-	}
-
-	onMoveStatic(event: JoystickEvent) {
-		if(event.data.distance > 10) {
-			if(event.data.direction.angle == "down") {
-				this.socket.emit('change_state',{'direction':'down'})
-			} else if(event.data.direction.angle == "up") {
-				this.socket.emit('change_state',{'direction':'up'})
-			} else if(event.data.direction.angle == "left") {
-				this.socket.emit('change_state',{'direction':'left'})
-			} else if(event.data.direction.angle == "right") {
-				this.socket.emit('change_state',{'direction':'right'})
-			}
-		} else {
-			this.socket.emit('change_state',{'direction':'stop'})		
-		}
-	}
-
-	onEndStatic(event: JoystickEvent) {
-		this.socket.emit('change_state',{'direction':'stop'})		
 	}
 
 	connectToCamera() {
