@@ -18,10 +18,10 @@ export class AppComponent {
 	key = ""
 	comPort = null
 	cameraPort = null
+	cameraName = null
 	debugMode = false
 	availableCom = []
-	availableVideo = []
-	availableCameras = []
+	availableVideoAndCameras = []
 	connected = false
 	@ViewChild('debugArea') debugArea: ElementRef;
 	constructor(private socket: Socket, private modalService: NgbModal) {}
@@ -39,10 +39,9 @@ export class AppComponent {
 			this.availableCom = message['status']
 			this.addToDebugArea(message)
 		})
-		this.socket.on("get_available_video_ports", (message) => {
+		this.socket.on("get_available_video_ports_and_camera_names", (message) => {
 			this.addToDebugArea(message)
-			this.availableVideo = JSON.parse(message['status'])
-			this.socket.emit("get_usb_camera_names", {"availableVideo": this.availableVideo})
+			this.availableVideoAndCameras = message['status']
 		})
 
 		this.socket.on("change_state", (message) => {
@@ -61,13 +60,9 @@ export class AppComponent {
 			this.updateCameraStatus(message)
 			this.addToDebugArea(message)
 		})
-		this.socket.on("get_usb_camera_names", (message) => {
-			console.log(message)
-			this.availableCameras = message['status']
-		})
 		// Grab any active devices
 		this.socket.emit("get_available_com_devices")
-		this.socket.emit("get_available_video_ports")
+		this.socket.emit("get_available_video_ports_and_camera_names")
 		this.socket.emit("get_active_video_and_com_port")
   	}
 
@@ -95,7 +90,7 @@ export class AppComponent {
 	}
 
 	connectToCamera() {
-		this.socket.emit("create_camera", {"camera": '0', "port":"COM6"})
+		this.socket.emit("create_camera", {"camera": '0', "port":"COM3"})
 	}
 
 	setActiveCOMPort() {
@@ -112,7 +107,13 @@ export class AppComponent {
 	
 	public updateCameraStatus(message) {
 		// TODO: Message needs to be standardized into some POJO
-		console.log("Updating Camera Status to: ", message['port'], message['camera'])
+		if (message['camera'] != null) {
+			console.log("Updating Camera Status to: ", message['port'], this.availableVideoAndCameras[parseInt(message['camera'])].camera_name)
+			this.cameraName = this.availableVideoAndCameras[parseInt(message['camera'])].camera_name
+		}
+		else {
+			console.log("Updating Camera Status to: ", message['port'], message['camera'])
+		}
 		this.comPort = message['port']
 		this.cameraPort = message['camera']
 	}
@@ -121,6 +122,7 @@ export class AppComponent {
 		this.socket.emit("destroy_camera")
 		this.cameraPort = null
 		this.comPort = null
+		this.cameraName = null
 	}
 
 	public refreshSerial() {
@@ -128,13 +130,16 @@ export class AppComponent {
 	}
 	
 	public refreshVideoPorts() {
-		this.socket.emit("get_available_video_ports")
+		this.socket.emit("get_available_video_ports_and_camera_names")
 	}
 
 	public resetCameraConnection() {
 		this.socket.emit("refresh_active_com_port")
 	}
 	public addToDebugArea(message: string) {
+		if (message["camera"] != null) {
+			message["camera"] = this.cameraName
+		}
 		if (this.debugArea != undefined) {
 			this.debugArea.nativeElement.value += JSON.stringify(message) + "\n"
 		}

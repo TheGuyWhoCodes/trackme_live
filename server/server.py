@@ -136,27 +136,23 @@ def set_active_video_port(message):
 def get_active_video_and_com_port():
 	send_active_video_and_com_port()
 
-@socketio.on('get_available_video_ports')
+@socketio.on('get_available_video_ports_and_camera_names')
 def get_available_video_ports():
-	socketio.emit('get_available_video_ports', {'status':'{}'.format(generate_camera_ports())})
-
-@socketio.on('get_usb_camera_names')
-def get_usb_camera_names(message):
 	cameras = []
-	camera_indexes = message["availableVideo"]
+	camera_indexes = generate_camera_ports()
 	if len(camera_indexes) > 0:
 		platform_name = platform.system()
 		if platform_name == 'Windows':
 			cameras_info_windows = asyncio.run(get_camera_information_for_windows())
 			for camera_index in camera_indexes:
 				camera_name = cameras_info_windows.get_at(camera_index).name.replace('\n', '')
-				cameras.append({'camera_index': camera_index, 'camera_name': camera_name})
+				cameras.append({"camera_index": camera_index, "camera_name": camera_name})
 		if platform_name == 'Linux':
 			for camera_index in camera_indexes:
 				camera_name = subprocess.run(['cat', '/sys/class/video4linux/video{}/name'.format(camera_index)], stdout=subprocess.PIPE).stdout.decode('utf-8')
 				camera_name = camera_name.replace('\n', '')
-				cameras.append({'camera_index': camera_index, 'camera_name': camera_name})
-	socketio.emit('get_usb_camera_names', {'status':'{}'.format(cameras)})
+				cameras.append({"camera_index": camera_index, "camera_name": camera_name})
+	socketio.emit('get_available_video_ports_and_camera_names', {'status': cameras})
 
 @app.route('/video_feed')
 def video_feed():
