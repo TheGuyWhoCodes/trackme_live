@@ -137,7 +137,7 @@ def get_active_video_and_com_port():
 	send_active_video_and_com_port()
 
 @socketio.on('get_available_video_ports_and_camera_names')
-def get_available_video_ports():
+def get_available_video_ports_and_camera_names():
 	cameras = []
 	camera_indexes = generate_camera_ports()
 	if len(camera_indexes) > 0:
