@@ -1,7 +1,6 @@
 import { Component, ElementRef, HostListener, Injectable, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Socket } from 'ngx-socket-io';
-import { JoystickEvent, NgxJoystickComponent } from 'ngx-joystick';
 import * as io from 'socket.io-client';
 
 
@@ -29,6 +28,9 @@ export class AppComponent {
 		this.socket = io.connect("http://localhost:4001")
 		this.socket.on("connect", () => {
 			console.log("Successfully connected!")
+			this.socket.emit("get_available_com_devices")
+			this.socket.emit("get_available_video_ports")
+			this.socket.emit("get_active_video_and_com_port")
 			this.connected = true
 		})
 		this.socket.on("disconnect", () => {
@@ -60,10 +62,6 @@ export class AppComponent {
 			this.updateCameraStatus(message)
 			this.addToDebugArea(message)
 		})
-		// Grab any active devices
-		this.socket.emit("get_available_com_devices")
-		this.socket.emit("get_available_video_ports")
-		this.socket.emit("get_active_video_and_com_port")
   	}
 
 	@HostListener('document:keypress', ['$event'])
@@ -89,24 +87,8 @@ export class AppComponent {
 		this.socket.emit('change_state',{'direction':'stop'})			  
 	}
 
-	onMoveStatic(event: JoystickEvent) {
-		if(event.data.distance > 10) {
-			if(event.data.direction.angle == "down") {
-				this.socket.emit('change_state',{'direction':'down'})
-			} else if(event.data.direction.angle == "up") {
-				this.socket.emit('change_state',{'direction':'up'})
-			} else if(event.data.direction.angle == "left") {
-				this.socket.emit('change_state',{'direction':'left'})
-			} else if(event.data.direction.angle == "right") {
-				this.socket.emit('change_state',{'direction':'right'})
-			}
-		} else {
-			this.socket.emit('change_state',{'direction':'stop'})		
-		}
-	}
-
-	onEndStatic(event: JoystickEvent) {
-		this.socket.emit('change_state',{'direction':'stop'})		
+	handleButtonEvent(event: any) {
+		this.socket.emit('change_state',{'direction':event})
 	}
 
 	connectToCamera() {
@@ -144,6 +126,10 @@ export class AppComponent {
 	
 	public refreshVideoPorts() {
 		this.socket.emit("get_available_video_ports")
+	}
+
+	public sendCameraHome() {
+		this.socket.emit('change_state',{'direction':'home'})		
 	}
 
 	public resetCameraConnection() {
