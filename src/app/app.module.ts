@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HeaderComponent } from './header/header.component';
-import { NgxJoystickModule } from 'ngx-joystick';
 
 const socketConfig = {
 	url: 'http://localhost:4001', // Where the Socket IO instance is for Flask
@@ -23,7 +22,6 @@ const socketConfig = {
 	AppRoutingModule,
 	SocketIoModule.forRoot(socketConfig),
 	NgbModule,
-	NgxJoystickModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
