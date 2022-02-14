@@ -28,6 +28,9 @@ export class AppComponent {
 		this.socket = io.connect("http://localhost:4001")
 		this.socket.on("connect", () => {
 			console.log("Successfully connected!")
+			this.socket.emit("get_available_com_devices")
+			this.socket.emit("get_available_video_ports")
+			this.socket.emit("get_active_video_and_com_port")
 			this.connected = true
 		})
 		this.socket.on("disconnect", () => {
@@ -59,10 +62,6 @@ export class AppComponent {
 			this.updateCameraStatus(message)
 			this.addToDebugArea(message)
 		})
-		// Grab any active devices
-		this.socket.emit("get_available_com_devices")
-		this.socket.emit("get_available_video_ports")
-		this.socket.emit("get_active_video_and_com_port")
   	}
 
 	@HostListener('document:keypress', ['$event'])
@@ -86,6 +85,10 @@ export class AppComponent {
 	@HostListener('document:keyup', ['$event'])
 	handleStopCommand(event: KeyboardEvent) {
 		this.socket.emit('change_state',{'direction':'stop'})			  
+	}
+
+	handleButtonEvent(event: any) {
+		this.socket.emit('change_state',{'direction':event})
 	}
 
 	connectToCamera() {
@@ -123,6 +126,10 @@ export class AppComponent {
 	
 	public refreshVideoPorts() {
 		this.socket.emit("get_available_video_ports")
+	}
+
+	public sendCameraHome() {
+		this.socket.emit('change_state',{'direction':'home'})		
 	}
 
 	public resetCameraConnection() {
