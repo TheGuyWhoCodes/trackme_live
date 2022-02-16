@@ -7,7 +7,7 @@
 
 <div class="row">
     <div class="col">
-		<button *ngIf = "comPort == null || cameraName == null" type="button" class="btn btn-secondary" (click)="open(content)">Add Camera <i class="fas fa-plus"></i></button>
+		<button *ngIf = "comPort == null || cameraPort == null" type="button" class="btn btn-secondary"(click)="open(content)">Add Camera <i class="fas fa-plus"></i></button>
 		<div class = "selected">
 			<h6>Current Camera: {{cameraName ? cameraName : "None Selected"}}</h6>
 			<h6>Current Serial Port: {{comPort ? comPort : "None Selected"}}</h6>
@@ -31,10 +31,60 @@
 				<button ngbDropdownItem (click)="destroyCamera()">Disconnect from Camera</button>
 			</div>
 		</div>
-		<div class = "controls">
+		<div class = "controls" *ngIf = "comPort != null && cameraPort != null">
 			<div class = "control button-controls">
 				<h4>Button Control</h4>
-				buttons should go here
+				<div class="container">
+					<div class="row mb-3">
+						<div class="col-sm">
+							<button type="button" class="btn btn-primary control-button" (pointerdown)="handleButtonEvent('upleft')" (pointerup)=handleStopCommand($event)>
+								<span class="fa-rotate-by" style="display: inline-block; --fa-rotate-angle: -45deg;">
+									<i class="fa-solid fa-arrow-up"></i>
+								</span>
+							</button>
+						</div>
+						<div class="col-sm">
+							<button type="button" class="btn btn-primary control-button" (pointerdown)="handleButtonEvent('up')" (pointerup)=handleStopCommand($event)><i class="fa-solid fa-arrow-up"></i></button>
+						</div>
+						<div class="col-sm">
+							<button type="button" class="btn btn-primary control-button" (pointerdown)="handleButtonEvent('upright')" (pointerup)=handleStopCommand($event)>
+								<span class="fa-rotate-by" style="display: inline-block; --fa-rotate-angle: 45deg;">
+									<i class="fa-solid fa-arrow-up"></i>
+								</span>
+							</button>
+						</div>
+					</div>
+					<div class="row mb-3">
+						<div class="col-sm">
+							<button type="button" class="btn btn-primary control-button" (pointerdown)="handleButtonEvent('left')" (pointerup)=handleStopCommand($event)><i class="fa-solid fa-arrow-left"></i></button>
+						</div>
+						<div class="col-sm">
+							<button type="button" class="btn btn-primary control-button" (pointerdown)="sendCameraHome()" (pointerup)=handleStopCommand($event)><i class="fa-solid fa-circle"></i></button>
+						</div>
+						<div class="col-sm">
+							<button type="button" class="btn btn-primary control-button" (pointerdown)="handleButtonEvent('right')" (pointerup)=handleStopCommand($event)><i class="fa-solid fa-arrow-right"></i></button>
+						</div>
+					</div>
+					<div class="row mb-3">
+						<div class="col-sm">
+							<button type="button" class="btn btn-primary control-button" (pointerdown)="handleButtonEvent('downleft')" (pointerup)=handleStopCommand($event)>
+								<span class="fa-rotate-by" style="display: inline-block; --fa-rotate-angle: -135deg;">
+									<i class="fa-solid fa-arrow-up"></i>
+								</span>
+							</button>
+						</div>
+						<div class="col-sm">
+							<button type="button" class="btn btn-primary control-button" (pointerdown)="handleButtonEvent('down')" (pointerup)=handleStopCommand($event)><i class="fa-solid fa-arrow-down"></i></button>
+						</div>
+						<div class="col-sm">
+							<button type="button" class="btn btn-primary control-button" (pointerdown)="handleButtonEvent('downright')" (pointerup)=handleStopCommand($event)>
+								<span class="fa-rotate-by" style="display: inline-block; --fa-rotate-angle: 135deg;">
+									<i class="fa-solid fa-arrow-up"></i>
+								</span>
+							</button>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class = "control joystick">
 				<h4>JoyStick Control</h4>
@@ -53,7 +103,7 @@
 							<button type="button" class="btn btn-primary">Camera Home</button>
 						</div>
 						<div class="col-sm">
-							<button type="button" class="btn btn-primary">Reset Camera</button>
+							<button type="button" class="btn btn-primary" (pointerdown)=resetCameraConnection()>Reset Camera</button>
 						</div>
 						<div class="col-sm">
 							<button type="button" class="btn btn-primary">Stop Camera</button>
@@ -72,6 +122,8 @@
 			<label for="debug-messages">Debug Messages</label>
 			<textarea #debugArea class="form-control" id="debug-messages" rows="3"></textarea>
 		</div>
+
+		<h3 *ngIf = "comPort == null && cameraPort == null">No Camera Registered Yet!</h3>
 	</div>
 </div>
 

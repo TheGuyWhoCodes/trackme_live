@@ -49,9 +49,18 @@ def handle_state(message):
 		camera.Connection.left(amount=15)
 	elif(message['direction'] == "right"):
 		camera.Connection.right(amount=15)
+	elif(message['direction'] == "upleft"):
+		camera.Connection.left_up(pan=10, tilt=10)
+	elif(message['direction'] == "upright"):
+		camera.Connection.right_up(pan=10, tilt=10)
+	elif(message['direction'] == "downleft"):
+		camera.Connection.left_down(pan=10, tilt=10)
+	elif(message['direction'] == "downright"):
+		camera.Connection.right_down(pan=10, tilt=10)
 	elif(message['direction'] == "stop"):
 		camera.Connection.stop()
-	
+	elif(message['direction'] == "home"):
+		camera.Connection.home()
 	socketio.emit('change_state', { 'text':'Command = change_state => {}'.format(message)})
 
 
