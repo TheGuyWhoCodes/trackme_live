@@ -30,7 +30,7 @@ export class AppComponent {
 		this.socket.on("connect", () => {
 			console.log("Successfully connected!")
 			this.socket.emit("get_available_com_devices")
-			this.socket.emit("get_available_video_ports")
+			this.socket.emit("get_available_video_ports_and_camera_names")
 			this.socket.emit("get_active_video_and_com_port")
 			this.connected = true
 		})
@@ -63,10 +63,6 @@ export class AppComponent {
 			this.updateCameraStatus(message)
 			this.addToDebugArea(message)
 		})
-		// Grab any active devices
-		this.socket.emit("get_available_com_devices")
-		this.socket.emit("get_available_video_ports_and_camera_names")
-		this.socket.emit("get_active_video_and_com_port")
   	}
 
 	@HostListener('document:keypress', ['$event'])
