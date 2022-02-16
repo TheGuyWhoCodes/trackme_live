@@ -2,6 +2,7 @@ import { Component, ElementRef, HostListener, Injectable, ViewChild } from '@ang
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Socket } from 'ngx-socket-io';
 import * as io from 'socket.io-client';
+import { create as nipplejsCreate } from 'nipplejs';
 
 
 @Component({
@@ -62,6 +63,15 @@ export class AppComponent {
 			this.updateCameraStatus(message)
 			this.addToDebugArea(message)
 		})
+        document.addEventListener('DOMContentLoaded', function() {
+            let options = {
+                zone: document.getElementById('zone_joystick'),
+                color: "blue",
+                mode: "static" as "dynamic" | "semi" | "static",
+                position: {left: "50%", bottom: "50%" }
+            }
+            let manager = nipplejsCreate(options);
+        })
   	}
 
 	@HostListener('document:keypress', ['$event'])
