@@ -3,6 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Socket } from 'ngx-socket-io';
 import * as io from 'socket.io-client';
 import { create as nipplejsCreate } from 'nipplejs';
+import { Options } from '@angular-slider/ngx-slider';
 
 
 @Component({
@@ -15,6 +16,11 @@ import { create as nipplejsCreate } from 'nipplejs';
   })
 
 export class AppComponent {
+    value: number = 100;
+    options: Options = {
+        floor: 0,
+        ceil: 100 
+    };
 	title = 'trackme-webui';
 	key = ""
 	comPort = null

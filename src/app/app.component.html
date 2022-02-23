@@ -30,7 +30,7 @@
 				<button ngbDropdownItem (click)="destroyCamera()">Disconnect from Camera</button>
 			</div>
 		</div>
-		<div class = "controls" *ngIf = "true">
+		<div class = "controls" *ngIf = "comPort != null && cameraPort != null">
 			<div class = "control button-controls">
 				<h4>Button Control</h4>
 				<div class="container">
@@ -88,13 +88,11 @@
 			<div class = "control joystick">
 				<h4>JoyStick Control</h4>
                 <div style="width: 100px; height: 111px"> </div>
-                <!-- I am not good with css! -->
                 <div id="zone_joystick" style="height: 0px; margin-top: 0px; margin-bottom 1px; "></div>
 			</div>
 			<div class = "control zoom">
 				<h4>Zoom Slider</h4>
-				zoom slider should go here
-                <!-- <mat-slider aria-label="unit(s)"></mat-slider>-->
+                <ngx-slider [(value)]="value" [options]="options"></ngx-slider>
 			</div>
 			<div class = "control control-cluster">
 				<h4>Camera Controls</h4>
