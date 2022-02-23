@@ -154,12 +154,18 @@ def get_available_video_ports_and_camera_names():
 		if platform_name == 'Windows':
 			cameras_info_windows = asyncio.run(get_camera_information_for_windows())
 			for camera_index in camera_indexes:
-				camera_name = cameras_info_windows.get_at(camera_index).name.replace('\n', '')
+				try:
+					camera_name = cameras_info_windows.get_at(camera_index).name.replace('\n', '')
+				except Exception:
+					camera_name = "N/A"
 				cameras.append({"camera_index": camera_index, "camera_name": camera_name})
 		if platform_name == 'Linux':
 			for camera_index in camera_indexes:
-				camera_name = subprocess.run(['cat', '/sys/class/video4linux/video{}/name'.format(camera_index)], stdout=subprocess.PIPE).stdout.decode('utf-8')
-				camera_name = camera_name.replace('\n', '')
+				try:
+					camera_name = subprocess.run(['cat', '/sys/class/video4linux/video{}/name'.format(camera_index)], stdout=subprocess.PIPE).stdout.decode('utf-8')
+					camera_name = camera_name.replace('\n', '')
+				except Exception:
+					camera_name = "N/A"
 				cameras.append({"camera_index": camera_index, "camera_name": camera_name})
 	socketio.emit('get_available_video_ports_and_camera_names', {'status': cameras})
 
