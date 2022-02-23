@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostListener, Injectable, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Socket } from 'ngx-socket-io';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import * as io from 'socket.io-client';
 
 
@@ -22,15 +23,17 @@ export class AppComponent {
 	availableCom = []
 	availableVideo = []
 	connected = false
+	video = ""
 	@ViewChild('debugArea') debugArea: ElementRef;
-	constructor(private socket: Socket, private modalService: NgbModal) {}
+	constructor(private socket: Socket, private modalService: NgbModal, private domSanitizer: DomSanitizer) {}
 	ngOnInit() {
 		this.socket = io.connect("http://localhost:4001")
 		this.socket.on("connect", () => {
 			console.log("Successfully connected!")
+			this.socket.emit("get_active_video_and_com_port")
 			this.socket.emit("get_available_com_devices")
 			this.socket.emit("get_available_video_ports")
-			this.socket.emit("get_active_video_and_com_port")
+			this.socket.emit("video_feed")
 			this.connected = true
 		})
 		this.socket.on("disconnect", () => {
@@ -52,6 +55,7 @@ export class AppComponent {
 		
 		this.socket.on("create_camera", (message) => {
 			this.updateCameraStatus(message)
+			this.socket.emit("video_feed")
 			this.addToDebugArea(message)
 		})
 
@@ -61,6 +65,9 @@ export class AppComponent {
 		this.socket.on("get_active_video_and_com_port", (message) => {
 			this.updateCameraStatus(message)
 			this.addToDebugArea(message)
+		})
+		this.socket.on("video_feed", (video) => {
+			this.video = ("data:image/jpeg;base64,"+video)
 		})
   	}
 
@@ -139,5 +146,9 @@ export class AppComponent {
 		if (this.debugArea != undefined) {
 			this.debugArea.nativeElement.value += JSON.stringify(message) + "\n"
 		}
+	}
+
+	public getVideoURL(): SafeUrl {
+		return this.domSanitizer.bypassSecurityTrustUrl(this.video)
 	}
 }

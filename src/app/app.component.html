@@ -8,16 +8,17 @@
 <div class="row">
     <div class="col">
 		<button *ngIf = "comPort == null || cameraPort == null" type="button" class="btn btn-secondary"(click)="open(content)">Add Camera <i class="fas fa-plus"></i></button>
+	
+		<div class="custom-control custom-switch">
+			<input #debugSwitch type="checkbox" class="custom-control-input" id="debugSwitch" [checked]="debugMode" (change)="toggleDebugMode(debugSwitch.checked)">
+			<label class="custom-control-label" for="debugSwitch">Debug Mode</label>
+		</div>
 		<div class = "selected">
 			<h6>Current Camera: {{cameraPort ? "Camera " + cameraPort : "None Selected"}}</h6>
 			<h6>Current Serial Port: {{comPort ? comPort : "None Selected"}}</h6>
 		</div>
 
-		<div class="custom-control custom-switch">
-			<input #debugSwitch type="checkbox" class="custom-control-input" id="debugSwitch" [checked]="debugMode" (change)="toggleDebugMode(debugSwitch.checked)">
-			<label class="custom-control-label" for="debugSwitch">Debug Mode</label>
-		</div>
-		<h2>stream should go here</h2>
+		<img style="-webkit-user-select: none;margin: auto;background-color: hsl(0, 0%, 25%);" [src]="getVideoURL()">
     </div>
     <div class="col">
 		<div ngbDropdown class = "settings-dropdown" container="body"  *ngIf = "comPort != null && cameraPort != null"  >

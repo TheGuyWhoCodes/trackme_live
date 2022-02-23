@@ -9,6 +9,7 @@
 # Combining these two things creates a "VISCACamera object". A VISCA Camera
 # object can be easily extended to allow multiple cameras at once in the
 # future.
+from cv2 import VideoCapture
 from imutils.video import VideoStream
 from visca import camera
 
@@ -38,7 +39,7 @@ class VISCACamera:
 			self.Connection.init()
 			self.Connection.home()
 
-			self.Video = VideoStream(src=int(video)).start()
+			# self.Video = VideoCapture(index=int(video))
 			self.VideoSrc = video
 		except Exception as err:
 			self.Connection = None
