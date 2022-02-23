@@ -9,7 +9,7 @@
     <div class="col">
 		<button *ngIf = "comPort == null || cameraPort == null" type="button" class="btn btn-secondary"(click)="open(content)">Add Camera <i class="fas fa-plus"></i></button>
 		<div class = "selected">
-			<h6>Current Camera: {{cameraPort ? "Camera " + cameraPort : "None Selected"}}</h6>
+			<h6>Current Camera: {{cameraName ? cameraName : "None Selected"}}</h6>
 			<h6>Current Serial Port: {{comPort ? comPort : "None Selected"}}</h6>
 		</div>
 
@@ -146,10 +146,10 @@
 			</option>
 		  </select>
 		  <br>
-		  <label for="visca-camera-port">VISCA Camera Port</label>
+		  <label for="visca-camera-port">VISCA Camera</label>
 		  <select class="form-select" aria-label="Camera Selection">
-				<option *ngFor="let camera of availableVideo; let i = index" [value]="availableVideo[i]">
-					{{camera}}
+				<option *ngFor="let camera of availableVideoAndCameras">
+					{{camera.camera_name}}
 				</option>
 			</select>
 		</div>
