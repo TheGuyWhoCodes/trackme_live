@@ -122,47 +122,46 @@ export class AppComponent {
 		this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'})
 	}
 
-      /*@ViewChild('staticJoystic') staticJoystick: NgxJoystickComponent;
+    @ViewChild('staticJoystic') staticJoystick: NgxJoystickComponent;
 
-      staticOptions: JoystickManagerOptions = {
-        mode: 'static',
-        position: { left: '50%', top: '50%' },
-        color: 'blue',
-      };
+    staticOptions: JoystickManagerOptions = {
+      mode: 'static',
+      position: { left: '50%', top: '50%' },
+      color: 'blue',
+    };
 
-      staticOutputData: JoystickOutputData;
+    staticOutputData: JoystickOutputData;
 
-      directionStatic: string;
-      interactingStatic: boolean;
+    directionStatic: string;
+    interactingStatic: boolean;
 
-
-      onStartStatic(event: JoystickEvent) {
+    onStartStatic(event: JoystickEvent) {
         this.interactingStatic = true;
-      }
+    }
 
-      onEndStatic(event: JoystickEvent) {
+    onEndStatic(event: JoystickEvent) {
         this.interactingStatic = false;
-      }
+    }
 
-      onMoveStatic(event: JoystickEvent) {
+    onMoveStatic(event: JoystickEvent) {
         this.staticOutputData = event.data;
-      }
+    }
 
-      onPlainUpStatic(event: JoystickEvent) {
+    onPlainUpStatic(event: JoystickEvent) {
         this.directionStatic = 'UP';
-      }
+    }
 
-      onPlainDownStatic(event: JoystickEvent) {
+    onPlainDownStatic(event: JoystickEvent) {
         this.directionStatic = 'DOWN';
-      }
+    }
 
-      onPlainLeftStatic(event: JoystickEvent) {
+    onPlainLeftStatic(event: JoystickEvent) {
         this.directionStatic = 'LEFT';
-      }
+    }
 
-      onPlainRightStatic(event: JoystickEvent) {
+    onPlainRightStatic(event: JoystickEvent) {
         this.directionStatic = 'RIGHT';
-      }*/
+    }
 
 	public toggleDebugMode(value:boolean){
     	this.debugMode = value;

@@ -89,15 +89,16 @@
 				<h4>JoyStick Control</h4>
                 <div class="mycontainer mynoselect"> 
                     <div class="myzone">
-                     <ngx-joystick #staticJoystic></ngx-joystick>
-                     <!-- [options]="staticOptions"
-                            (start)="onStartStatic($event)"
-                            (end)="onEndStatic($event)"
-                            (move)="onMoveStatic($event)"
-                            (plainUp)="onPlainUpStatic($event)"
-                            (plainDown)="onPlainDownStatic($event)"
-                            (plainLeft)="onPlainLeftStatic($event)"
-                            (plainRight)="onPlainRightStatic($event)" -->
+                         <ngx-joystick #staticJoystic
+                                [options]="staticOptions"
+                                (start)="onStartStatic($event)"
+                                (end)="onEndStatic($event)"
+                                (move)="onMoveStatic($event)"
+                                (plainUp)="onPlainUpStatic($event)"
+                                (plainDown)="onPlainDownStatic($event)"
+                                (plainLeft)="onPlainLeftStatic($event)"
+                                (plainRight)="onPlainRightStatic($event)">
+                        </ngx-joystick>
                     </div>
                 </div>
 			</div>
