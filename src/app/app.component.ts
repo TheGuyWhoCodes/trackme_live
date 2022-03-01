@@ -1,9 +1,12 @@
-import { Component, ElementRef, HostListener, Injectable, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, HostListener, Injectable, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Socket } from 'ngx-socket-io';
 import * as io from 'socket.io-client';
-import { create as nipplejsCreate } from 'nipplejs';
 import { Options } from '@angular-slider/ngx-slider';
+import { JoystickEvent, NgxJoystickComponent } from 'ngx-joystick';
+import { JoystickManagerOptions, JoystickOutputData } from 'nipplejs';
+
+// import { create as nipplejsCreate } from 'nipplejs';
 
 
 @Component({
@@ -69,7 +72,7 @@ export class AppComponent {
 			this.updateCameraStatus(message)
 			this.addToDebugArea(message)
 		})
-        document.addEventListener('DOMContentLoaded', function() {
+        /* document.addEventListener('DOMContentLoaded', function() {
             let options = {
                 zone: document.getElementById('zone_joystick'),
                 color: "blue",
@@ -77,7 +80,7 @@ export class AppComponent {
                 position: {left: "50%", bottom: "50%" }
             }
             let manager = nipplejsCreate(options);
-        })
+        }) */
   	}
 
 	@HostListener('document:keypress', ['$event'])
@@ -118,6 +121,48 @@ export class AppComponent {
 	open(content) {
 		this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'})
 	}
+
+      /*@ViewChild('staticJoystic') staticJoystick: NgxJoystickComponent;
+
+      staticOptions: JoystickManagerOptions = {
+        mode: 'static',
+        position: { left: '50%', top: '50%' },
+        color: 'blue',
+      };
+
+      staticOutputData: JoystickOutputData;
+
+      directionStatic: string;
+      interactingStatic: boolean;
+
+
+      onStartStatic(event: JoystickEvent) {
+        this.interactingStatic = true;
+      }
+
+      onEndStatic(event: JoystickEvent) {
+        this.interactingStatic = false;
+      }
+
+      onMoveStatic(event: JoystickEvent) {
+        this.staticOutputData = event.data;
+      }
+
+      onPlainUpStatic(event: JoystickEvent) {
+        this.directionStatic = 'UP';
+      }
+
+      onPlainDownStatic(event: JoystickEvent) {
+        this.directionStatic = 'DOWN';
+      }
+
+      onPlainLeftStatic(event: JoystickEvent) {
+        this.directionStatic = 'LEFT';
+      }
+
+      onPlainRightStatic(event: JoystickEvent) {
+        this.directionStatic = 'RIGHT';
+      }*/
 
 	public toggleDebugMode(value:boolean){
     	this.debugMode = value;

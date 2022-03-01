@@ -87,8 +87,19 @@
 			</div>
 			<div class = "control joystick">
 				<h4>JoyStick Control</h4>
-                <div style="width: 100px; height: 111px"> </div>
-                <div id="zone_joystick" style="height: 0px; margin-top: 0px; margin-bottom 1px; "></div>
+                <div class="mycontainer mynoselect"> 
+                    <div class="myzone">
+                     <ngx-joystick #staticJoystic></ngx-joystick>
+                     <!-- [options]="staticOptions"
+                            (start)="onStartStatic($event)"
+                            (end)="onEndStatic($event)"
+                            (move)="onMoveStatic($event)"
+                            (plainUp)="onPlainUpStatic($event)"
+                            (plainDown)="onPlainDownStatic($event)"
+                            (plainLeft)="onPlainLeftStatic($event)"
+                            (plainRight)="onPlainRightStatic($event)" -->
+                    </div>
+                </div>
 			</div>
 			<div class = "control zoom">
 				<h4>Zoom Slider</h4>

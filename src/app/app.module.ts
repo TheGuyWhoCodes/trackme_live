@@ -8,6 +8,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HeaderComponent } from './header/header.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { NgxJoystickModule } from 'ngx-joystick'; 
 
 const socketConfig = {
 	url: 'http://localhost:4001', // Where the Socket IO instance is for Flask
@@ -24,6 +25,7 @@ const socketConfig = {
 	AppRoutingModule,
 	SocketIoModule.forRoot(socketConfig),
     NgxSliderModule,
+    NgxJoystickModule,
 	NgbModule,
 	BrowserAnimationsModule,
   ],
