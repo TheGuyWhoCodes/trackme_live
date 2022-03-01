@@ -122,7 +122,7 @@ export class AppComponent {
 		this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'})
 	}
 
-    @ViewChild('staticJoystic') staticJoystick: NgxJoystickComponent;
+    @ViewChild('staticJoystick') staticJoystick: NgxJoystickComponent;
 
     staticOptions: JoystickManagerOptions = {
       mode: 'static',
@@ -131,16 +131,14 @@ export class AppComponent {
     };
 
     staticOutputData: JoystickOutputData;
-
     directionStatic: string;
-    interactingStatic: boolean;
 
     onStartStatic(event: JoystickEvent) {
-        this.interactingStatic = true;
+        this.socket.emit('change_state',{'direction': this.directionStatic })
     }
 
     onEndStatic(event: JoystickEvent) {
-        this.interactingStatic = false;
+        this.socket.emit('change_state',{'direction':'stop'})
     }
 
     onMoveStatic(event: JoystickEvent) {
@@ -148,19 +146,19 @@ export class AppComponent {
     }
 
     onPlainUpStatic(event: JoystickEvent) {
-        this.directionStatic = 'UP';
+        this.directionStatic = 'up';
     }
 
     onPlainDownStatic(event: JoystickEvent) {
-        this.directionStatic = 'DOWN';
+        this.directionStatic = 'down';
     }
 
     onPlainLeftStatic(event: JoystickEvent) {
-        this.directionStatic = 'LEFT';
+        this.directionStatic = 'left';
     }
 
     onPlainRightStatic(event: JoystickEvent) {
-        this.directionStatic = 'RIGHT';
+        this.directionStatic = 'right';
     }
 
 	public toggleDebugMode(value:boolean){
