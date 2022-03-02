@@ -1,14 +1,11 @@
-import { Component, OnInit, ElementRef, HostListener, Injectable, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Injectable, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Socket } from 'ngx-socket-io';
 import * as io from 'socket.io-client';
 import { Options } from '@angular-slider/ngx-slider';
 import { JoystickEvent, NgxJoystickComponent } from 'ngx-joystick';
 import { JoystickManagerOptions, JoystickOutputData } from 'nipplejs';
-import { interval } from 'rxjs';
-
-// import { create as nipplejsCreate } from 'nipplejs';
-
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -33,7 +30,6 @@ export class AppComponent {
 	availableCom = []
 	availableVideo = []
 	connected = false
-    sub = null
 	@ViewChild('debugArea') debugArea: ElementRef;
 	constructor(private socket: Socket, private modalService: NgbModal) {}
 	ngOnInit() {
@@ -74,15 +70,6 @@ export class AppComponent {
 			this.updateCameraStatus(message)
 			this.addToDebugArea(message)
 		})
-        /* document.addEventListener('DOMContentLoaded', function() {
-            let options = {
-                zone: document.getElementById('zone_joystick'),
-                color: "blue",
-                mode: "static" as "dynamic" | "semi" | "static",
-                position: {left: "50%", bottom: "50%" }
-            }
-            let manager = nipplejsCreate(options);
-        }) */
   	}
 
 	@HostListener('document:keypress', ['$event'])
@@ -134,10 +121,11 @@ export class AppComponent {
 
     staticOutputData: JoystickOutputData;
     directionStatic: string;
+    sub: Subscription; 
 
     onStartStatic(event: JoystickEvent) {
-        this.sub = interval(100)
-        .subscribe((val) => { this.sendDirectionStatic() });
+        /* the interval time can be changed depending on whether the joystick is too sensitive or not responsive enough */
+        this.sub = interval(100).subscribe((val) => { this.sendDirectionStatic() });
     }
     
    sendDirectionStatic() {
@@ -151,14 +139,16 @@ export class AppComponent {
         } else{
             this.directionStatic = "right";
         }
-        this.socket.emit('change_state',{'direction': 'this.directionStatic' });
-        //console.log(this.directionStatic);
+
+        // this.socket.emit('change_state',{'direction': 'this.directionStatic' }); /* uncomment for testing with the camera */
+        console.log(this.directionStatic); /* this is for debugging and can be deleted */
    }
 
     onEndStatic(event: JoystickEvent) {
-        this.sub.unsubscribe();
-        this.socket.emit('change_state',{'direction': 'stop' });
-        //console.log("stop");
+        if (this.sub != null) { this.sub.unsubscribe(); } 
+
+        // this.socket.emit('change_state',{'direction': 'stop' }); /* uncomment for testing with the camera */
+        console.log("stop"); /* this is for debugging and can be deleted */
     }
 
     onMoveStatic(event: JoystickEvent) {
