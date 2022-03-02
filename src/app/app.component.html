@@ -28,10 +28,10 @@
 				<button ngbDropdownItem (click) = "resetCameraConnection()">Refresh COM Connection</button>
 				<div class="dropdown-divider"></div>
 				<button ngbDropdownItem (click)="destroyCamera()">Disconnect from Camera</button>
-			</div>
+		    </div>
 		</div>
-        <div class = "controls" *ngIf = "comPort != null && cameraPort != null ">
-			<div class = "control button-controls">
+        <div class = "controls" *ngIf = "comPort != null && cameraPort != null">
+		    <div class = "control button-controls">
 				<h4>Button Control</h4>
 				<div class="container">
 					<div class="row mb-3">

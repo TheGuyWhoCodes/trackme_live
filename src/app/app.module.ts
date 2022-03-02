@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HeaderComponent } from './header/header.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { NgxJoystickModule } from 'ngx-joystick'; 
 
@@ -27,7 +26,6 @@ const socketConfig = {
     NgxSliderModule,
     NgxJoystickModule,
 	NgbModule,
-	BrowserAnimationsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
