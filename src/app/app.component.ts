@@ -5,6 +5,7 @@ import * as io from 'socket.io-client';
 import { Options } from '@angular-slider/ngx-slider';
 import { JoystickEvent, NgxJoystickComponent } from 'ngx-joystick';
 import { JoystickManagerOptions, JoystickOutputData } from 'nipplejs';
+import { interval } from 'rxjs';
 
 // import { create as nipplejsCreate } from 'nipplejs';
 
@@ -32,6 +33,7 @@ export class AppComponent {
 	availableCom = []
 	availableVideo = []
 	connected = false
+    sub = null
 	@ViewChild('debugArea') debugArea: ElementRef;
 	constructor(private socket: Socket, private modalService: NgbModal) {}
 	ngOnInit() {
@@ -134,31 +136,33 @@ export class AppComponent {
     directionStatic: string;
 
     onStartStatic(event: JoystickEvent) {
-        this.socket.emit('change_state',{'direction': this.directionStatic })
+        this.sub = interval(100)
+        .subscribe((val) => { this.sendDirectionStatic() });
     }
+    
+   sendDirectionStatic() {
+        let angle = this.staticOutputData.angle.degree
+        if (angle >= 45 && angle < 135) {
+            this.directionStatic = "up";
+        } else if (angle >= 135 && angle < 225) {
+            this.directionStatic = "left";
+        } else if (angle >= 225 && angle < 315) {
+            this.directionStatic = "down";
+        } else{
+            this.directionStatic = "right";
+        }
+        this.socket.emit('change_state',{'direction': 'this.directionStatic' });
+        //console.log(this.directionStatic);
+   }
 
     onEndStatic(event: JoystickEvent) {
-        this.socket.emit('change_state',{'direction':'stop'})
+        this.sub.unsubscribe();
+        this.socket.emit('change_state',{'direction': 'stop' });
+        //console.log("stop");
     }
 
     onMoveStatic(event: JoystickEvent) {
         this.staticOutputData = event.data;
-    }
-
-    onPlainUpStatic(event: JoystickEvent) {
-        this.directionStatic = 'up';
-    }
-
-    onPlainDownStatic(event: JoystickEvent) {
-        this.directionStatic = 'down';
-    }
-
-    onPlainLeftStatic(event: JoystickEvent) {
-        this.directionStatic = 'left';
-    }
-
-    onPlainRightStatic(event: JoystickEvent) {
-        this.directionStatic = 'right';
     }
 
 	public toggleDebugMode(value:boolean){

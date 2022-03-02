@@ -30,7 +30,7 @@
 				<button ngbDropdownItem (click)="destroyCamera()">Disconnect from Camera</button>
 			</div>
 		</div>
-        <div class = "controls" *ngIf = "true"> <!-- comPort != null && cameraPort != null -->
+        <div class = "controls" *ngIf = "comPort != null && cameraPort != null ">
 			<div class = "control button-controls">
 				<h4>Button Control</h4>
 				<div class="container">
@@ -93,11 +93,7 @@
                                 [options]="staticOptions"
                                 (start)="onStartStatic($event)"
                                 (end)="onEndStatic($event)"
-                                (move)="onMoveStatic($event)"
-                                (plainUp)="onPlainUpStatic($event)"
-                                (plainDown)="onPlainDownStatic($event)"
-                                (plainLeft)="onPlainLeftStatic($event)"
-                                (plainRight)="onPlainRightStatic($event)">
+                                (move)="onMoveStatic($event)">
                         </ngx-joystick>
                     </div>
                 </div>
