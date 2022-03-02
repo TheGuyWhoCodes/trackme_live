@@ -140,15 +140,15 @@ export class AppComponent {
             this.directionStatic = "right";
         }
 
-        // this.socket.emit('change_state',{'direction': 'this.directionStatic' }); /* uncomment for testing with the camera */
-        console.log(this.directionStatic); /* this is for debugging and can be deleted */
+        this.socket.emit('change_state',{'direction': 'this.directionStatic' }); /* uncomment for testing with the camera */
+        //console.log(this.directionStatic); /* this is for debugging and can be deleted */
    }
 
     onEndStatic(event: JoystickEvent) {
         if (this.sub != null) { this.sub.unsubscribe(); } 
 
-        // this.socket.emit('change_state',{'direction': 'stop' }); /* uncomment for testing with the camera */
-        console.log("stop"); /* this is for debugging and can be deleted */
+        this.socket.emit('change_state',{'direction': 'stop' }); /* uncomment for testing with the camera */
+        //console.log("stop"); /* this is for debugging and can be deleted */
     }
 
     onMoveStatic(event: JoystickEvent) {
