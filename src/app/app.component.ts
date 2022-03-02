@@ -16,9 +16,10 @@ export class AppComponent {
 	key = ""
 	comPort = null
 	cameraPort = null
+	cameraName = null
 	debugMode = false
 	availableCom = []
-	availableVideo = []
+	availableVideoAndCameras = []
 	connected = false
 	@ViewChild('debugArea') debugArea: ElementRef;
 	constructor(private modalService: NgbModal, private camera: CameraService) {}
@@ -35,7 +36,7 @@ export class AppComponent {
       }
       if(data.name == 'availableVideo')
       {
-        this.availableVideo = JSON.parse(data.value['status']);
+        this.availableVideoAndCameras = data.value['status'];
         this.addToDebugArea(data.value);
       }
       if(data.name == 'updateCameraStatus')
@@ -79,7 +80,7 @@ export class AppComponent {
 	}
 
 	connectToCamera() {
-		this.camera.sendData("create_camera", {"camera": '0', "port":"COM6"})
+		this.camera.sendData("create_camera", {"camera": '0', "port":"COM3"})
 	}
 
 	setActiveCOMPort() {
@@ -96,7 +97,13 @@ export class AppComponent {
 
 	public updateCameraStatus(message) {
 		// TODO: Message needs to be standardized into some POJO
-		console.log("Updating Camera Status to: ", message['port'], message['camera'])
+		if (message['camera'] != null) {
+			console.log("Updating Camera Status to: ", message['port'], this.availableVideoAndCameras[parseInt(message['camera'])].camera_name)
+			this.cameraName = this.availableVideoAndCameras[parseInt(message['camera'])].camera_name
+		}
+		else {
+			console.log("Updating Camera Status to: ", message['port'], message['camera'])
+		}
 		this.comPort = message['port']
 		this.cameraPort = message['camera']
 	}
@@ -105,6 +112,7 @@ export class AppComponent {
 		this.camera.send("destroy_camera")
 		this.cameraPort = null
 		this.comPort = null
+		this.cameraName = null
 	}
 
 	public refreshSerial() {
@@ -112,7 +120,7 @@ export class AppComponent {
 	}
 
 	public refreshVideoPorts() {
-		this.camera.send("get_available_video_ports")
+		this.camera.send("get_available_video_ports_and_camera_names")
 	}
 
 	public sendCameraHome() {
@@ -123,6 +131,9 @@ export class AppComponent {
 		this.camera.send("refresh_active_com_port")
 	}
 	public addToDebugArea(message: string) {
+		if (message["camera"] != null) {
+			message["camera"] = this.cameraName
+		}
 		if (this.debugArea != undefined) {
 			this.debugArea.nativeElement.value += JSON.stringify(message) + "\n"
 		}

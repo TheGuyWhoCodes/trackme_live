@@ -3,7 +3,8 @@
 - Python3
 - Run `python3 -m venv trackme_server`
 - run `source trackme_server/bin/activate`
-- install sources from pip `pip install -r deps.txt`
+- install sources from pip `pip install -r reqs.txt`
+- run `python3 server.py` to run the backend
 
 guide from: https://github.com/alwaysai/video-streamer
 

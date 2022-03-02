@@ -32,7 +32,7 @@ export class SocketService {
       this.socket.on("get_available_com_devices", (message) => {
         observer.next({name:'availableCom', value: message})
       })
-      this.socket.on("get_available_video_ports", (message) => {
+      this.socket.on("get_available_video_ports_and_camera_names", (message) => {
         observer.next({name:'availableVideo', value: message})
       })
 
