@@ -73,7 +73,7 @@ def create_visca_camera(message):
 		camera.init_camera(message['camera'], message['port'])
 		socketio.emit("create_camera", {'status': 'Successfully created cameras!', 'camera': message['camera'], 'port': message['port']})
 	except Exception as err:
-		socketio.emit('create_camera', {'status':'{}'.format(err)})
+		socketio.emit('create_camera', {'error':'{}'.format(err)})
 	send_active_video_and_com_port()
 	# thread = Thread(target = generate_stream, args=(frameBuffer,))
 	# thread.daemon = True
@@ -167,6 +167,7 @@ def get_available_video_ports_and_camera_names():
 				except Exception:
 					camera_name = "N/A"
 				cameras.append({"camera_index": camera_index, "camera_name": camera_name})
+	print(cameras)
 	socketio.emit('get_available_video_ports_and_camera_names', {'status': cameras})
 
 @app.route('/video_feed')
