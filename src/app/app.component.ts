@@ -1,6 +1,8 @@
 import { Component, ElementRef, HostListener, Injectable, ViewChild } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Socket } from 'ngx-socket-io';
+import { cpuUsage } from 'process';
 import * as io from 'socket.io-client';
 
 
@@ -23,8 +25,14 @@ export class AppComponent {
 	availableCom = []
 	availableVideoAndCameras = []
 	connected = false
+
+	cameraSelectForm = this.formBuilder.group({
+		camera:'',
+		com:''
+	});
+
 	@ViewChild('debugArea') debugArea: ElementRef;
-	constructor(private socket: Socket, private modalService: NgbModal) {}
+	constructor(private socket: Socket, private modalService: NgbModal, private formBuilder: FormBuilder) {}
 	ngOnInit() {
 		this.socket = io.connect("http://localhost:4001")
 		this.socket.on("connect", () => {
@@ -92,8 +100,19 @@ export class AppComponent {
 		this.socket.emit('change_state',{'direction':event})
 	}
 
-	connectToCamera() {
-		this.socket.emit("create_camera", {"camera": '0', "port":"COM3"})
+	connectToCamera() : void  {
+		console.log("Connecting to camera using: ", this.cameraSelectForm.value)
+		let currCamera =  this.cameraSelectForm.value.camera
+		// TODO: This needs to be cleaned once someone implements POJOs for the responses
+		for(let cameras of this.availableVideoAndCameras) {
+			console.log(cameras.camera_name, currCamera)
+			if(cameras.camera_name == currCamera) {
+				currCamera = cameras.camera_index
+			}
+		}
+		console.log("create_camera", {"camera": currCamera, "port":this.cameraSelectForm.value.com})
+		this.socket.emit("create_camera", {"camera": currCamera, "port":this.cameraSelectForm.value.com})
+		this.modalService.dismissAll()
 	}
 
 	setActiveCOMPort() {

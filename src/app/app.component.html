@@ -137,27 +137,28 @@
 	  </button>
 	</div>
 	<div class="modal-body">
-	  <form>
+	  <form [formGroup] = "cameraSelectForm" (ngSubmit)="connectToCamera()">
 		<div class="form-group">
 		  <label for="visca-serial-port">VISCA Serial Port</label>
-		  <select class="form-select" aria-label="VISCA Selection">
+		  <select class="form-select" aria-label="VISCA Selection"  formControlName="com">
 			<option *ngFor="let com of availableCom; let i = index" [value]="availableCom[i]">
 				{{com}}
 			</option>
 		  </select>
 		  <br>
 		  <label for="visca-camera-port">VISCA Camera</label>
-		  <select class="form-select" aria-label="Camera Selection">
-				<option *ngFor="let camera of availableVideoAndCameras">
+		  <select class="form-select" aria-label="Camera Selection" formControlName="camera">
+				<option *ngFor="let camera of availableVideoAndCameras; let i = index" [value]="availableVideoAndCameras[i].camera_name">
 					{{camera.camera_name}}
 				</option>
 			</select>
 		</div>
-	  </form>
-	</div>
 	<div class="modal-footer">
-	  <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Connect</button>
+	  <button type="submit" class="btn btn-outline-dark">Connect</button>
 	</div>
+	</form>
+</div>
+
   </ng-template>
 
 <router-outlet></router-outlet>

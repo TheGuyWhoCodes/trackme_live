@@ -167,6 +167,7 @@ def get_available_video_ports_and_camera_names():
 				except Exception:
 					camera_name = "N/A"
 				cameras.append({"camera_index": camera_index, "camera_name": camera_name})
+	print(cameras)
 	socketio.emit('get_available_video_ports_and_camera_names', {'status': cameras})
 
 @app.route('/video_feed')
