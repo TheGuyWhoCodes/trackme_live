@@ -22,6 +22,9 @@ export class AppComponent {
 	cameraPort = null
 	cameraName = null
 	debugMode = false
+	error_message = ''
+	alert_type='danger'
+	camera_error = false
 	availableCom = []
 	availableVideoAndCameras = []
 	connected = false
@@ -100,6 +103,10 @@ export class AppComponent {
 		this.socket.emit('change_state',{'direction':event})
 	}
 
+	close_alert() {
+		this.camera_error = false
+	}
+
 	connectToCamera() : void  {
 		console.log("Connecting to camera using: ", this.cameraSelectForm.value)
 		let currCamera =  this.cameraSelectForm.value.camera
@@ -112,7 +119,18 @@ export class AppComponent {
 		}
 		console.log("create_camera", {"camera": currCamera, "port":this.cameraSelectForm.value.com})
 		this.socket.emit("create_camera", {"camera": currCamera, "port":this.cameraSelectForm.value.com})
-		this.modalService.dismissAll()
+
+		this.socket.on("create_camera", (message) => {
+			console.log("Here is what happens when we creaed a camera: ", message);
+			if(message['error'] != undefined) {
+				this.error_message = message['error']
+				this.camera_error = true
+			} else {
+				this.camera_error = false
+				this.modalService.dismissAll()
+			}
+		})
+
 	}
 
 	setActiveCOMPort() {

@@ -73,7 +73,7 @@ def create_visca_camera(message):
 		camera.init_camera(message['camera'], message['port'])
 		socketio.emit("create_camera", {'status': 'Successfully created cameras!', 'camera': message['camera'], 'port': message['port']})
 	except Exception as err:
-		socketio.emit('create_camera', {'status':'{}'.format(err)})
+		socketio.emit('create_camera', {'error':'{}'.format(err)})
 	send_active_video_and_com_port()
 	# thread = Thread(target = generate_stream, args=(frameBuffer,))
 	# thread.daemon = True
