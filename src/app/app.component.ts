@@ -130,12 +130,22 @@ export class AppComponent {
     
    sendDirectionStatic() {
         let angle = this.staticOutputData.angle.degree
-        if (angle >= 45 && angle < 135) {
+        let s = 22.5;
+        let a = 45;
+        if (angle >= s && angle < s + a) {
+            this.directionStatic = "upright";
+        } else if (angle >= s + a && angle < s + 2*a) {
             this.directionStatic = "up";
-        } else if (angle >= 135 && angle < 225) {
+        } else if (angle >= s + 2*a && angle < s + 3*a) {
+            this.directionStatic = "upleft";
+        } else if (angle >= s + 3*a && angle < s + 4*a) {
             this.directionStatic = "left";
-        } else if (angle >= 225 && angle < 315) {
+        } else if (angle >= s + 4*a && angle < s + 5*a) {
+            this.directionStatic = "downleft";
+        } else if (angle >= s + 5*a && angle < s + 6*a) {
             this.directionStatic = "down";
+        } else if (angle >= s + 6*a && angle < s + 7*a) {
+            this.directionStatic = "downright";
         } else{
             this.directionStatic = "right";
         }
