@@ -146,20 +146,17 @@ export class AppComponent {
 	}
 	
 	public updateCameraStatus(message) {
-		// TODO: Message needs to be standardized into some POJO
-		if (message['camera'] != null) {
-			console.log("Updating Camera Status to: ", message['port'], this.availableVideoAndCameras[parseInt(message['camera'])].camera_name)
-			this.cameraName = this.availableVideoAndCameras[parseInt(message['camera'])].camera_name
-		}
-		else {
-			console.log("Updating Camera Status to: ", message['port'], message['camera'])
-		}
+		console.log(message)
+		console.log(this.availableVideoAndCameras)
 		this.comPort = message['port']
 		this.cameraPort = message['camera']
+		this.cameraName = message['camera_name']
 	}
 
 	public destroyCamera() {
 		this.socket.emit("destroy_camera")
+		this.refreshSerial()
+		this.refreshVideoPorts()
 		this.cameraPort = null
 		this.comPort = null
 		this.cameraName = null

@@ -17,7 +17,8 @@
 			<input #debugSwitch type="checkbox" class="custom-control-input" id="debugSwitch" [checked]="debugMode" (change)="toggleDebugMode(debugSwitch.checked)">
 			<label class="custom-control-label" for="debugSwitch">Debug Mode</label>
 		</div>
-		<h2>stream should go here</h2>
+		<iframe src = "http://localhost:5000/video_feed" class = "video-feed" scrolling="no" *ngIf = "comPort != null && cameraPort != null"></iframe>
+		<!-- <img name="main" id="main" border="0" width="640" height="480" src="http://localhost:5000/video_feed"> -->
     </div>
     <div class="col">
 		<div ngbDropdown class = "settings-dropdown" container="body"  *ngIf = "comPort != null && cameraPort != null"  >
