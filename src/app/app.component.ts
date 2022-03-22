@@ -112,16 +112,13 @@ export class AppComponent {
 		let currCamera =  this.cameraSelectForm.value.camera
 		// TODO: This needs to be cleaned once someone implements POJOs for the responses
 		for(let cameras of this.availableVideoAndCameras) {
-			console.log(cameras.camera_name, currCamera)
 			if(cameras.camera_name == currCamera) {
 				currCamera = cameras.camera_index
 			}
 		}
-		console.log("create_camera", {"camera": currCamera, "port":this.cameraSelectForm.value.com})
 		this.socket.emit("create_camera", {"camera": currCamera, "port":this.cameraSelectForm.value.com})
 
 		this.socket.on("create_camera", (message) => {
-			console.log("Here is what happens when we creaed a camera: ", message);
 			if(message['error'] != undefined) {
 				this.error_message = message['error']
 				this.camera_error = true
@@ -146,20 +143,15 @@ export class AppComponent {
 	}
 	
 	public updateCameraStatus(message) {
-		// TODO: Message needs to be standardized into some POJO
-		if (message['camera'] != null) {
-			console.log("Updating Camera Status to: ", message['port'], this.availableVideoAndCameras[parseInt(message['camera'])].camera_name)
-			this.cameraName = this.availableVideoAndCameras[parseInt(message['camera'])].camera_name
-		}
-		else {
-			console.log("Updating Camera Status to: ", message['port'], message['camera'])
-		}
 		this.comPort = message['port']
 		this.cameraPort = message['camera']
+		this.cameraName = message['camera_name']
 	}
 
 	public destroyCamera() {
 		this.socket.emit("destroy_camera")
+		this.refreshSerial()
+		this.refreshVideoPorts()
 		this.cameraPort = null
 		this.comPort = null
 		this.cameraName = null
