@@ -1,6 +1,10 @@
 import { Component, ElementRef, HostListener, Injectable, ViewChild } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {CameraService} from './camera.service';
+import { Socket } from 'ngx-socket-io';
+import { cpuUsage } from 'process';
+import * as io from 'socket.io-client';
 
 @Component({
   selector: 'app-root',
@@ -18,32 +22,53 @@ export class AppComponent {
 	cameraPort = null
 	cameraName = null
 	debugMode = false
+	error_message = ''
+	alert_type='danger'
+	camera_error = false
 	availableCom = []
 	availableVideoAndCameras = []
 	connected = false
+
+	cameraSelectForm = this.formBuilder.group({
+		camera:'',
+		com:''
+	});
+
 	@ViewChild('debugArea') debugArea: ElementRef;
-	constructor(private modalService: NgbModal, private camera: CameraService) {}
+	constructor(private modalService: NgbModal, private camera: CameraService, private formBuilder: FormBuilder) {}
+
 	ngOnInit() {
     this.camera.messages.subscribe(data => {
       if(data.name == 'connected')
       {
         this.connected = data.value;
       }
+      
       if(data.name == 'availableCom')
       {
         this.availableCom = data.value['status'];
         this.addToDebugArea(data.value);
       }
+      
       if(data.name == 'availableVideo')
       {
         this.availableVideoAndCameras = data.value['status'];
         this.addToDebugArea(data.value);
       }
+      
       if(data.name == 'updateCameraStatus')
       {
+        if(message['error'] != undefined) {
+				this.error_message = message['error']
+				this.camera_error = true
+			} else {
+				this.camera_error = false
+				this.modalService.dismissAll()
+			}
         this.updateCameraStatus(data.value);
         this.addToDebugArea(data.value);
       }
+      
       if(data.name == 'debug')
       {
         this.addToDebugArea(data.value);
@@ -79,8 +104,21 @@ export class AppComponent {
 		this.camera.direction(event)
 	}
 
-	connectToCamera() {
-		this.camera.sendData("create_camera", {"camera": '0', "port":"COM3"})
+	close_alert() {
+		this.camera_error = false
+	}
+
+	connectToCamera() : void  {
+		console.log("Connecting to camera using: ", this.cameraSelectForm.value)
+		let currCamera =  this.cameraSelectForm.value.camera
+		// TODO: This needs to be cleaned once someone implements POJOs for the responses
+		for(let cameras of this.availableVideoAndCameras) {
+			if(cameras.camera_name == currCamera) {
+				currCamera = cameras.camera_index
+			}
+		}
+		this.camera.sendData("create_camera", {"camera": currCamera, "port":this.cameraSelectForm.value.com})
+
 	}
 
 	setActiveCOMPort() {
@@ -96,20 +134,16 @@ export class AppComponent {
 	}
 
 	public updateCameraStatus(message) {
-		// TODO: Message needs to be standardized into some POJO
-		if (message['camera'] != null) {
-			console.log("Updating Camera Status to: ", message['port'], this.availableVideoAndCameras[parseInt(message['camera'])].camera_name)
-			this.cameraName = this.availableVideoAndCameras[parseInt(message['camera'])].camera_name
-		}
-		else {
-			console.log("Updating Camera Status to: ", message['port'], message['camera'])
-		}
 		this.comPort = message['port']
 		this.cameraPort = message['camera']
+		this.cameraName = message['camera_name']
 	}
 
 	public destroyCamera() {
+
 		this.camera.send("destroy_camera")
+		this.refreshSerial()
+		this.refreshVideoPorts()
 		this.cameraPort = null
 		this.comPort = null
 		this.cameraName = null

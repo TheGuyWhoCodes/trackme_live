@@ -11,6 +11,7 @@
 # future.
 from imutils.video import VideoStream
 from visca import camera
+import subprocess
 
 class VISCACamera:
 	def __init__(self):
@@ -21,7 +22,8 @@ class VISCACamera:
 		self.Connection = None
 		self.VideoSrc = None
 		self.Video = None
-	def init_camera(self, video, connection):
+		self.CameraName = None
+	def init_camera(self, video, connection, camera_name):
 		""" init_camera will initalize BOTH the camera feed and serial feed
 
 			video: The port of the camera that we will be using
@@ -38,8 +40,9 @@ class VISCACamera:
 			self.Connection.init()
 			self.Connection.home()
 
-			self.Video = VideoStream(src=int(video)).start()
+			self.Video = subprocess.Popen(["python", "cameraworker.py", str(video)])
 			self.VideoSrc = video
+			self.CameraName = camera_name
 		except Exception as err:
 			self.Connection = None
 			self.Video = None
@@ -52,10 +55,11 @@ class VISCACamera:
 		"""
 		if not self.Connection.close(self.Connection._output):
 			raise Exception("Unable to stop serial interface with VISCA")
-		self.Video.stop()
+		self.Video.kill()
 		self.Connection = None
 		self.Video = None
 		self.VideoSrc = None
+		self.CameraName = None
 	
 	def update_com_port(self, port):
 		print(self.Connection._output_string)

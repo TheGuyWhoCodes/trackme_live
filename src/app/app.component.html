@@ -17,7 +17,8 @@
 			<input #debugSwitch type="checkbox" class="custom-control-input" id="debugSwitch" [checked]="debugMode" (change)="toggleDebugMode(debugSwitch.checked)">
 			<label class="custom-control-label" for="debugSwitch">Debug Mode</label>
 		</div>
-		<h2>stream should go here</h2>
+		<iframe src = "http://localhost:5000/video_feed" class = "video-feed" scrolling="no" *ngIf = "comPort != null && cameraPort != null"></iframe>
+		<!-- <img name="main" id="main" border="0" width="640" height="480" src="http://localhost:5000/video_feed"> -->
     </div>
     <div class="col">
 		<div ngbDropdown class = "settings-dropdown" container="body"  *ngIf = "comPort != null && cameraPort != null"  >
@@ -137,27 +138,33 @@
 	  </button>
 	</div>
 	<div class="modal-body">
-	  <form>
+	 <ngb-alert [type]='alert_type' (close)="close_alert()" *ngIf="camera_error">
+		<h4 class="alert-heading">Oh no!</h4>
+		<p>{{error_message}}</p>
+		<hr>
+		<p class="mb-0">Maybe try using a different serial port?</p>
+	 </ngb-alert>
+	  <form [formGroup] = "cameraSelectForm" (ngSubmit)="connectToCamera()">
 		<div class="form-group">
 		  <label for="visca-serial-port">VISCA Serial Port</label>
-		  <select class="form-select" aria-label="VISCA Selection">
+		  <select class="form-select" aria-label="VISCA Selection"  formControlName="com">
 			<option *ngFor="let com of availableCom; let i = index" [value]="availableCom[i]">
 				{{com}}
 			</option>
 		  </select>
 		  <br>
 		  <label for="visca-camera-port">VISCA Camera</label>
-		  <select class="form-select" aria-label="Camera Selection">
-				<option *ngFor="let camera of availableVideoAndCameras">
+		  <select class="form-select" aria-label="Camera Selection" formControlName="camera">
+				<option *ngFor="let camera of availableVideoAndCameras; let i = index" [value]="availableVideoAndCameras[i].camera_name">
 					{{camera.camera_name}}
 				</option>
-			</select>
+		  </select>
 		</div>
-	  </form>
+		<div class="modal-footer">
+			<button type="submit" class="btn btn-outline-dark">Connect</button>
+		</div>
+		</form>
 	</div>
-	<div class="modal-footer">
-	  <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Connect</button>
-	</div>
-  </ng-template>
+</ng-template>
 
 <router-outlet></router-outlet>
