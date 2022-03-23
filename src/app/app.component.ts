@@ -1,10 +1,10 @@
 import { Component, ElementRef, HostListener, Injectable, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {CameraService} from './camera.service';
 import { Socket } from 'ngx-socket-io';
 import { cpuUsage } from 'process';
 import * as io from 'socket.io-client';
-
 
 @Component({
   selector: 'app-root',
@@ -35,60 +35,61 @@ export class AppComponent {
 	});
 
 	@ViewChild('debugArea') debugArea: ElementRef;
-	constructor(private socket: Socket, private modalService: NgbModal, private formBuilder: FormBuilder) {}
+	constructor(private modalService: NgbModal, private camera: CameraService, private formBuilder: FormBuilder) {}
+
 	ngOnInit() {
-		this.socket = io.connect("http://localhost:4001")
-		this.socket.on("connect", () => {
-			console.log("Successfully connected!")
-			this.socket.emit("get_available_com_devices")
-			this.socket.emit("get_available_video_ports_and_camera_names")
-			this.socket.emit("get_active_video_and_com_port")
-			this.connected = true
-		})
-		this.socket.on("disconnect", () => {
-			console.log("Disconnected from service!")		
-			this.connected = false	
-		})
-		this.socket.on("get_available_com_devices", (message) => {
-			this.availableCom = message['status']
-			this.addToDebugArea(message)
-		})
-		this.socket.on("get_available_video_ports_and_camera_names", (message) => {
-			this.addToDebugArea(message)
-			this.availableVideoAndCameras = message['status']
-		})
+    this.camera.messages.subscribe(data => {
+      if(data.name == 'connected')
+      {
+        this.connected = data.value;
+      }
 
-		this.socket.on("change_state", (message) => {
-			this.addToDebugArea(message)
-		})
-		
-		this.socket.on("create_camera", (message) => {
-			this.updateCameraStatus(message)
-			this.addToDebugArea(message)
-		})
+      if(data.name == 'availableCom')
+      {
+        this.availableCom = data.value['status'];
+        this.addToDebugArea(data.value);
+      }
 
-		this.socket.on("set_active_com_port", (message) => {
-			this.addToDebugArea(message)
-		})
-		this.socket.on("get_active_video_and_com_port", (message) => {
-			this.updateCameraStatus(message)
-			this.addToDebugArea(message)
-		})
+      if(data.name == 'availableVideo')
+      {
+        this.availableVideoAndCameras = data.value['status'];
+        this.addToDebugArea(data.value);
+      }
+
+      if(data.name == 'updateCameraStatus')
+      {
+        if(data.value['error'] != undefined) {
+				this.error_message = data.value['error']
+				this.camera_error = true
+			} else {
+				this.camera_error = false
+				this.modalService.dismissAll()
+			}
+        this.updateCameraStatus(data.value);
+        this.addToDebugArea(data.value);
+      }
+
+      if(data.name == 'debug')
+      {
+        this.addToDebugArea(data.value);
+      }
+    })
+
   	}
 
 	@HostListener('document:keypress', ['$event'])
 	handleKeyboardEvent(event: KeyboardEvent) {
 		this.key = event.key;
 		if(event.key == "w") {
-			this.socket.emit('change_state',{'direction':'up'})
+      this.camera.direction('up');
 		} else if(event.key == "a") {
-			this.socket.emit('change_state',{'direction':'left'})
+			this.camera.direction('left')
 		} else if(event.key == "s") {
-			this.socket.emit('change_state',{'direction':'down'})
+			this.camera.direction('down')
 		} else if(event.key == "d") {
-			this.socket.emit('change_state',{'direction':'right'})
+			this.camera.direction('right')
 		} else if (event.key == " ") {
-			this.socket.emit('change_state',{'direction':'stop'})		
+			this.camera.direction('stop')
 		} else {
 			console.log(event.key)
 		}
@@ -96,11 +97,11 @@ export class AppComponent {
 
 	@HostListener('document:keyup', ['$event'])
 	handleStopCommand(event: KeyboardEvent) {
-		this.socket.emit('change_state',{'direction':'stop'})			  
+		this.camera.direction('stop')
 	}
 
 	handleButtonEvent(event: any) {
-		this.socket.emit('change_state',{'direction':event})
+		this.camera.direction(event)
 	}
 
 	close_alert() {
@@ -116,22 +117,12 @@ export class AppComponent {
 				currCamera = cameras.camera_index
 			}
 		}
-		this.socket.emit("create_camera", {"camera": currCamera, "port":this.cameraSelectForm.value.com})
-
-		this.socket.on("create_camera", (message) => {
-			if(message['error'] != undefined) {
-				this.error_message = message['error']
-				this.camera_error = true
-			} else {
-				this.camera_error = false
-				this.modalService.dismissAll()
-			}
-		})
+		this.camera.sendData("create_camera", {"camera": currCamera, "port":this.cameraSelectForm.value.com})
 
 	}
 
 	setActiveCOMPort() {
-		this.socket.emit("set_active_com_port", {"port":"COM100"})
+		this.camera.sendData("set_active_com_port", {"port":"COM100"})
   	}
 
 	open(content) {
@@ -141,7 +132,7 @@ export class AppComponent {
 	public toggleDebugMode(value:boolean){
     	this.debugMode = value;
 	}
-	
+
 	public updateCameraStatus(message) {
 		this.comPort = message['port']
 		this.cameraPort = message['camera']
@@ -149,7 +140,8 @@ export class AppComponent {
 	}
 
 	public destroyCamera() {
-		this.socket.emit("destroy_camera")
+
+		this.camera.send("destroy_camera")
 		this.refreshSerial()
 		this.refreshVideoPorts()
 		this.cameraPort = null
@@ -158,19 +150,19 @@ export class AppComponent {
 	}
 
 	public refreshSerial() {
-		this.socket.emit("get_available_com_devices")
+		this.camera.send("get_available_com_devices")
 	}
-	
+
 	public refreshVideoPorts() {
-		this.socket.emit("get_available_video_ports_and_camera_names")
+		this.camera.send("get_available_video_ports_and_camera_names")
 	}
 
 	public sendCameraHome() {
-		this.socket.emit('change_state',{'direction':'home'})		
+		this.camera.sendData('change_state',{'direction':'home'})
 	}
 
 	public resetCameraConnection() {
-		this.socket.emit("refresh_active_com_port")
+		this.camera.send("refresh_active_com_port")
 	}
 	public addToDebugArea(message: string) {
 		if (message["camera"] != null) {
