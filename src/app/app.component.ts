@@ -2,7 +2,7 @@ import { Component, ElementRef, HostListener, Injectable, ViewChild } from '@ang
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Socket } from 'ngx-socket-io';
 import * as io from 'socket.io-client';
-import { Options } from '@angular-slider/ngx-slider';
+import { Options, ChangeContext } from '@angular-slider/ngx-slider';
 import { JoystickEvent, NgxJoystickComponent } from 'ngx-joystick';
 import { JoystickManagerOptions, JoystickOutputData } from 'nipplejs';
 import { interval, Subscription } from 'rxjs';
@@ -17,7 +17,7 @@ import { interval, Subscription } from 'rxjs';
   })
 
 export class AppComponent {
-    value: number = 100;
+    value: number = 0;
     options: Options = {
         floor: 0,
         ceil: 100 
@@ -70,6 +70,9 @@ export class AppComponent {
 			this.updateCameraStatus(message)
 			this.addToDebugArea(message)
 		})
+        this.socket.on("zoom", (message) => {
+			this.addToDebugArea(message)
+        })
   	}
 
 	@HostListener('document:keypress', ['$event'])
@@ -163,6 +166,11 @@ export class AppComponent {
 
     onMoveStatic(event: JoystickEvent) {
         this.staticOutputData = event.data;
+    }
+
+    zoomValueChange(changeContext: ChangeContext)  {
+        console.log(changeContext)
+        this.socket.emit('zoom', {'amount' : changeContext});
     }
 
 	public toggleDebugMode(value:boolean){

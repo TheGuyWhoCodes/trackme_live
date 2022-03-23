@@ -100,7 +100,7 @@
 			</div>
 			<div class = "control zoom">
 				<h4>Zoom Slider</h4>
-                <ngx-slider [(value)]="value" [options]="options"></ngx-slider>
+                <ngx-slider [(value)]="value" (valueChange)="zoomValueChange($event)" [options]="options"></ngx-slider>
 			</div>
 			<div class = "control control-cluster">
 				<h4>Camera Controls</h4>
