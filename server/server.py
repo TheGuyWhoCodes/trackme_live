@@ -142,14 +142,14 @@ def get_active_video_and_com_port():
 def get_available_video_ports():
 	socketio.emit('get_available_video_ports', {'status':'{}'.format(generate_camera_ports())})
 
-@socketio.on('zoom'):
-    def set_zoom_amount(message):
-	print('[INFO] Web client {}: Command = change_state => {}'.format(request.sid, message))
-	if camera.Connection == None:
-		socketio.emit('server2web',{ 'text':'Unable to zoom camera, not initalized'}, namespace='/web')
-		return
-        camera.Connection.zoom(message['amount'])
-	socketio.emit('zoom', { 'text':'Command = zoom => {}'.format(message)})
+@socketio.on('zoom')
+def set_zoom_amount(message):
+    print('[INFO] Web client {}: Command = change_state => {}'.format(request.sid, message))
+    if camera.Connection == None:
+            socketio.emit('server2web',{ 'text':'Unable to zoom camera, not initalized'}, namespace='/web')
+            return
+    camera.Connection.zoom(message['amount'])
+    socketio.emit('zoom', { 'text':'Command = zoom => {}'.format(message)})
 
 @app.route('/video_feed')
 def video_feed():
