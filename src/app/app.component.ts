@@ -43,23 +43,23 @@ export class AppComponent {
       {
         this.connected = data.value;
       }
-      
+
       if(data.name == 'availableCom')
       {
         this.availableCom = data.value['status'];
         this.addToDebugArea(data.value);
       }
-      
+
       if(data.name == 'availableVideo')
       {
         this.availableVideoAndCameras = data.value['status'];
         this.addToDebugArea(data.value);
       }
-      
+
       if(data.name == 'updateCameraStatus')
       {
-        if(message['error'] != undefined) {
-				this.error_message = message['error']
+        if(data.value['error'] != undefined) {
+				this.error_message = data.value['error']
 				this.camera_error = true
 			} else {
 				this.camera_error = false
@@ -68,7 +68,7 @@ export class AppComponent {
         this.updateCameraStatus(data.value);
         this.addToDebugArea(data.value);
       }
-      
+
       if(data.name == 'debug')
       {
         this.addToDebugArea(data.value);
