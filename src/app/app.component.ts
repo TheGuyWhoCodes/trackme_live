@@ -20,7 +20,7 @@ export class AppComponent {
     value: number = 0;
     options: Options = {
         floor: 0,
-        ceil: 100 
+        ceil: 10 
     };
 	title = 'trackme-webui';
 	key = ""
