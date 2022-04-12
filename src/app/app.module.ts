@@ -8,6 +8,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HeaderComponent } from './header/header.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { NgxJoystickModule } from 'ngx-joystick'; 
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 const socketConfig = {
 	url: 'http://localhost:4001', // Where the Socket IO instance is for Flask
@@ -26,6 +27,8 @@ const socketConfig = {
     NgxSliderModule,
     NgxJoystickModule,
 	NgbModule,
+	FormsModule,
+	ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

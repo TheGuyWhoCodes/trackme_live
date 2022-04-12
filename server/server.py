@@ -9,14 +9,21 @@ import sys
 
 from queue import Queue
 from cameraconnections import VISCACamera
+import asyncio
+import platform
+import subprocess
+if platform.system() == 'Windows':
+	import winrt.windows.devices.enumeration as windows_devices
+
 from threading import Thread
+	
 # Init Flask Instances
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 camera = VISCACamera()
-currFrame = None
-frameBuffer = Queue()
+active_cameras = []
+
 @socketio.on('connect')
 def connect_web():
     print('[INFO] Web client connected: {}'.format(request.sid))
@@ -63,14 +70,11 @@ def create_visca_camera(message):
 	and camera connection.
 	"""
 	try:	
-		camera.init_camera(message['camera'], message['port'])
+		camera.init_camera(message['camera'], message['port'], active_cameras[int(message['camera'])]['camera_name'])
 		socketio.emit("create_camera", {'status': 'Successfully created cameras!', 'camera': message['camera'], 'port': message['port']})
 	except Exception as err:
-		socketio.emit('create_camera', {'status':'{}'.format(err)})
+		socketio.emit('create_camera', {'error':'{}'.format(err)})
 	send_active_video_and_com_port()
-	# thread = Thread(target = generate_stream, args=(frameBuffer,))
-	# thread.daemon = True
-	# thread.start()
 
 @socketio.on('destroy_camera')
 def destroy_visca_camera():
@@ -79,7 +83,6 @@ def destroy_visca_camera():
 	try:
 		camera.stop_camera_instance()
 	except Exception as err:
-		print(err)
 		socketio.emit('destroy_camera', {'status':'{}'.format(err)})
 	send_active_video_and_com_port()
 
@@ -157,7 +160,31 @@ def video_feed():
 	"""
 	return Response(generate_stream(frameBuffer), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-
+@socketio.on('get_available_video_ports_and_camera_names')
+def get_available_video_ports_and_camera_names():
+	cameras = []
+	camera_indexes = generate_camera_ports()
+	if len(camera_indexes) > 0:
+		platform_name = platform.system()
+		if platform_name == 'Windows':
+			cameras_info_windows = asyncio.run(get_camera_information_for_windows())
+			for camera_index in camera_indexes:
+				try:
+					camera_name = cameras_info_windows.get_at(camera_index).name.replace('\n', '')
+				except Exception:
+					camera_name = "N/A"
+				cameras.append({"camera_index": camera_index, "camera_name": camera_name})
+		if platform_name == 'Linux':
+			for camera_index in camera_indexes:
+				try:
+					camera_name = subprocess.run(['cat', '/sys/class/video4linux/video{}/name'.format(camera_index)], stdout=subprocess.PIPE).stdout.decode('utf-8')
+					camera_name = camera_name.replace('\n', '')
+				except Exception:
+					camera_name = "N/A"
+				cameras.append({"camera_index": camera_index, "camera_name": camera_name})
+	global active_cameras
+	active_cameras = cameras
+	socketio.emit('get_available_video_ports_and_camera_names', {'status': cameras})
 
 def serial_ports():
 	""" serial_ports Lists serial port names that are currently active on the computer
@@ -169,7 +196,7 @@ def serial_ports():
 	return arr
 
 def send_active_video_and_com_port():
-	socketio.emit("get_active_video_and_com_port", {'camera': camera.VideoSrc, 'port': camera.Connection._output_string if camera.Connection is not None else None})
+	socketio.emit("get_active_video_and_com_port", {'camera': camera.VideoSrc, 'port': camera.Connection._output_string if camera.Connection is not None else None, "camera_name": camera.CameraName})
 
 def generate_camera_ports():
 	""" generate_camera_ports() will generate the integer port numbers needed to activate a
@@ -187,22 +214,12 @@ def generate_camera_ports():
 			arr.append(index)
 		cap.release()
 		index += 1
-
 	return arr
 
-def generate_stream(out_q):
-	if camera.Video is None:
-		return None
-	while True:
-		frame = camera.Video.read()
-		ret, buffer = cv2.imencode('.jpg', frame)
-		currFrame = buffer.tobytes()
-		# out_q.put(b'--frame\r\n'
-				# b'Content-Type: image/jpeg\r\n\r\n' + currFrame + b'\r\n')
-		yield (b'--frame\r\n'
-				b'Content-Type: image/jpeg\r\n\r\n' + currFrame + b'\r\n')
 
-
+async def get_camera_information_for_windows():
+	VIDEO_DEVICES = 4
+	return await windows_devices.DeviceInformation.find_all_async(VIDEO_DEVICES)
 
 if __name__ == "__main__":
 	print('[INFO] Starting server at http://localhost:4001')

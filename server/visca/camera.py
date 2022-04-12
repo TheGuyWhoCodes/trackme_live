@@ -480,4 +480,4 @@ class D100(Camera):
         #amount = amount // b
         t = m[amount]
         p, q, r, s = t[0], t[1], t[2], t[3]
-        return self.comm('8x0104470' + p + '0' + q + '0' + r + '0' + s + 'FF')
+        return self.comm('0104470' + p + '0' + q + '0' + r + '0' + s + 'FF')
