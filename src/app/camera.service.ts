@@ -18,11 +18,16 @@ export class CameraService {
   }
 
   send(msg){
-    this.messages.next({part1:msg, part2:{}});
+    this.messages.next({part1:msg});
+    //this.messages.next({part1:msg, part2:{}});
   }
 
   sendData(msg, data){
     this.messages.next({part1:msg, part2:data});
+  }
+
+  sendSingleData(msg){
+      this.messages.next({part1:msg});
   }
 
   direction(msg){
