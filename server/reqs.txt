@@ -8,5 +8,4 @@ pyserial
 imutils
 python-socketio==4.6.0
 python-engineio==3.13.2
-winsdk; sys_platform == "win32"
-Werkzeug==2.0
+winrt; sys_platform == "win32"
