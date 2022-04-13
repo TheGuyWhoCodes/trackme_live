@@ -25,7 +25,15 @@ export class CameraService {
     this.messages.next({part1:msg, part2:data});
   }
 
+  sendSingleData(msg){
+    this.messages.next({part1:msg});
+  }
+
   direction(msg){
     this.messages.next({part1:'change_state', part2:{'direction':msg}});
+  }
+
+  zoom(msg) {
+	  this.messages.next({part1:'zoom_camera', part2:{'direction':msg}});
   }
 }

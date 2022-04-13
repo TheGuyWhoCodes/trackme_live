@@ -25,8 +25,8 @@ export class AppComponent {
 	error_message = ''
 	alert_type='danger'
 	camera_error = false
-	availableCom = []
-	availableVideoAndCameras = []
+	availableCom = undefined
+	availableVideoAndCameras = undefined
 	connected = false
 
 	cameraSelectForm = this.formBuilder.group({
@@ -104,6 +104,10 @@ export class AppComponent {
 		this.camera.direction(event)
 	}
 
+	handleZoomEvent(event: any) {
+		this.camera.zoom(event)
+	}
+
 	close_alert() {
 		this.camera_error = false
 	}
@@ -141,7 +145,7 @@ export class AppComponent {
 
 	public destroyCamera() {
 
-		this.camera.send("destroy_camera")
+		this.camera.sendSingleData("destroy_camera")
 		this.refreshSerial()
 		this.refreshVideoPorts()
 		this.cameraPort = null
@@ -150,11 +154,11 @@ export class AppComponent {
 	}
 
 	public refreshSerial() {
-		this.camera.send("get_available_com_devices")
+		this.camera.sendSingleData("get_available_com_devices")
 	}
 
 	public refreshVideoPorts() {
-		this.camera.send("get_available_video_ports_and_camera_names")
+		this.camera.sendSingleData("get_available_video_ports_and_camera_names")
 	}
 
 	public sendCameraHome() {

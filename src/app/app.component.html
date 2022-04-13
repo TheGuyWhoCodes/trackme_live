@@ -93,8 +93,18 @@
 
 			</div>
 			<div class = "control zoom">
-				<h4>Zoom Slider</h4>
-				zoom slider should go here
+				<h4>Zoom Control</h4>
+				<div class="row mb-3">
+					<div class="col-sm">
+						<button type="button" class="btn btn-primary control-button" (pointerdown)="handleZoomEvent('unzoom')" (pointerup)="handleZoomEvent('stop')"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+					</div>
+					<div class="col-sm">
+						<button type="button" class="btn btn-primary control-button" (pointerdown)="handleZoomEvent('zoom_home')" (pointerup)="handleZoomEvent('stop')"><i class="fa-solid fa-circle"></i></button>
+					</div>
+					<div class="col-sm">
+						<button type="button" class="btn btn-primary control-button" (pointerdown)="handleZoomEvent('zoom')" (pointerup)="handleZoomEvent('stop')"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+					</div>
+				</div>
 			</div>
 			<div class = "control control-cluster">
 				<h4>Camera Controls</h4>
@@ -123,14 +133,24 @@
 			<label for="debug-messages">Debug Messages</label>
 			<textarea #debugArea class="form-control" id="debug-messages" rows="3"></textarea>
 		</div>
-
-		<h3 *ngIf = "comPort == null && cameraPort == null">No Camera Registered Yet!</h3>
+		<div class = "text-center m-5" *ngIf = "comPort == null && cameraPort == null">
+			<h3 >No Camera Registered Yet!</h3>
+			<h4>Use the "Add Camera" button to add a new camera!</h4>
+		</div>
 	</div>
 </div>
 
 
 
 <ng-template #content let-modal>
+	<div class = "loading-blur" [hidden]= "availableCom != undefined && availableVideoAndCameras != undefined"> 
+			<div class = "d-flex flex-row justify-content-center align-items-center m-5">
+				<div class="spinner-border" role="status">
+					<span class="sr-only">Loading...</span>
+			</div>
+		</div>
+
+	</div>
 	<div class="modal-header">
 	  <h4 class="modal-title" id="modal-basic-title">Add Camera</h4>
 	  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">

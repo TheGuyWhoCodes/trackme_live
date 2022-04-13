@@ -141,6 +141,16 @@ def set_active_video_port(message):
 def get_active_video_and_com_port():
 	send_active_video_and_com_port()
 
+@socketio.on('zoom_camera')
+def zoom_camera(message):
+	if(message["direction"] == 'zoom'):
+		camera.Connection.zoom_in()
+	elif(message["direction"] == "unzoom"):
+		camera.Connection.zoom_out()
+	elif(message["direction"] == "stop"):
+		camera.Connection.zoom_stop()
+	elif(message['direction'] == 'zoom_home'):
+		camera.Connection.zoom_home()
 @socketio.on('get_available_video_ports_and_camera_names')
 def get_available_video_ports_and_camera_names():
 	cameras = []
