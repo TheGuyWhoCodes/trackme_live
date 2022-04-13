@@ -22,7 +22,7 @@ export class SocketService {
         console.log("Successfully connected!")
         this.socket.emit("get_available_com_devices")
         this.socket.emit("get_available_video_ports")
-        this.socket.emit("get_active_video_and_com_port")
+        this.socket.emit("get_available_video_ports_and_camera_names")
         observer.next({name:'connected', value:true})
       })
       this.socket.on("disconnect", () => {
@@ -55,6 +55,11 @@ export class SocketService {
     let observer = {
       //next function acts as the send to the server
       next: (data: any) => {
+      if(data.part2 == undefined) {
+        //fix for if we aren't sending data
+        this.socket.emit(data.part1);
+        return;
+      }
         this.socket.emit(data.part1, data.part2);
       },
     };

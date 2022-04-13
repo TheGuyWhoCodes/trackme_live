@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HeaderComponent } from './header/header.component';
+import { NgxJoystickModule } from 'ngx-joystick'; 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 const socketConfig = {
@@ -22,6 +23,7 @@ const socketConfig = {
     BrowserModule,
 	AppRoutingModule,
 	SocketIoModule.forRoot(socketConfig),
+    NgxJoystickModule,
 	NgbModule,
 	FormsModule,
 	ReactiveFormsModule,

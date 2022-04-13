@@ -5,6 +5,9 @@ import {CameraService} from './camera.service';
 import { Socket } from 'ngx-socket-io';
 import { cpuUsage } from 'process';
 import * as io from 'socket.io-client';
+import { JoystickEvent, NgxJoystickComponent } from 'ngx-joystick';
+import { JoystickManagerOptions, JoystickOutputData } from 'nipplejs';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -74,7 +77,6 @@ export class AppComponent {
         this.addToDebugArea(data.value);
       }
     })
-
   	}
 
 	@HostListener('document:keypress', ['$event'])
@@ -128,6 +130,72 @@ export class AppComponent {
 	open(content) {
 		this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'})
 	}
+
+    @ViewChild('staticJoystick') staticJoystick: NgxJoystickComponent;
+
+    staticOptions: JoystickManagerOptions = {
+      mode: 'static',
+      position: { left: '50%', top: '50%' },
+      color: 'blue',
+    };
+
+    staticOutputData: JoystickOutputData;
+    directionStatic: string;
+    sub: Subscription; 
+
+    onStartStatic(event: JoystickEvent) {
+        /* the interval time can be changed depending on whether the joystick is too sensitive or not responsive enough */
+        this.sub = interval(250).subscribe((val) => { this.sendDirectionStatic() });
+    }
+    
+   sendDirectionStatic() {
+        let angle = this.staticOutputData.angle.degree
+        let s = 22.5;
+        let a = 45;
+        if (angle >= s && angle < s + a) {
+            this.directionStatic = "upright";
+        } else if (angle >= s + a && angle < s + 2*a) {
+            this.directionStatic = "up";
+        } else if (angle >= s + 2*a && angle < s + 3*a) {
+            this.directionStatic = "upleft";
+        } else if (angle >= s + 3*a && angle < s + 4*a) {
+            this.directionStatic = "left";
+        } else if (angle >= s + 4*a && angle < s + 5*a) {
+            this.directionStatic = "downleft";
+        } else if (angle >= s + 5*a && angle < s + 6*a) {
+            this.directionStatic = "down";
+        } else if (angle >= s + 6*a && angle < s + 7*a) {
+            this.directionStatic = "downright";
+        } else{
+            this.directionStatic = "right";
+        }
+
+        this.camera.sendData('change_state',{'direction': this.directionStatic }); /* uncomment for testing with the camera */
+        //console.log(this.directionStatic); /* this is for debugging and can be deleted */
+   }
+
+    onEndStatic(event: JoystickEvent) {
+        if (this.sub != null) { this.sub.unsubscribe(); } 
+
+        this.camera.sendData('change_state',{'direction': 'stop' }); /* uncomment for testing with the camera */
+        //console.log("stop"); /* this is for debugging and can be deleted */
+    }
+
+    onMoveStatic(event: JoystickEvent) {
+        this.staticOutputData = event.data;
+    }
+
+    zoom(event: MouseEvent){
+        this.camera.send('zoom')
+    }
+
+    unzoom(event: MouseEvent){
+        this.camera.send('unzoom')
+    }
+
+    zoomEnd(event: MouseEvent){
+        this.camera.send('end_zoom')
+    }
 
 	public toggleDebugMode(value:boolean){
     	this.debugMode = value;

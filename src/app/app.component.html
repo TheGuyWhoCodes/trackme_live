@@ -1,5 +1,4 @@
 <app-header></app-header>
-
 <div class="alert alert-danger" role="alert" *ngIf="!connected">
 	<strong>Oh no!</strong> You aren't connected to the backend service.
 </div>
@@ -30,10 +29,10 @@
 				<button ngbDropdownItem (click) = "resetCameraConnection()">Refresh COM Connection</button>
 				<div class="dropdown-divider"></div>
 				<button ngbDropdownItem (click)="destroyCamera()">Disconnect from Camera</button>
-			</div>
+		    </div>
 		</div>
-		<div class = "controls" *ngIf = "comPort != null && cameraPort != null">
-			<div class = "control button-controls">
+        <div class = "controls" *ngIf = "comPort != null && cameraPort != null">
+		    <div class = "control button-controls">
 				<h4>Button Control</h4>
 				<div class="container">
 					<div class="row mb-3">
@@ -89,12 +88,29 @@
 			</div>
 			<div class = "control joystick">
 				<h4>JoyStick Control</h4>
-				joystick should go here
-
+                <div class="mycontainer mynoselect"> 
+                    <div class="myzone">
+                         <ngx-joystick #staticJoystick
+                                [options]="staticOptions"
+                                (start)="onStartStatic($event)"
+                                (end)="onEndStatic($event)"
+                                (move)="onMoveStatic($event)">
+                        </ngx-joystick>
+                    </div>
+               </div>
 			</div>
 			<div class = "control zoom">
-				<h4>Zoom Slider</h4>
-				zoom slider should go here
+				<h4>Zoom Control</h4>
+                <button type="button" class="btn btn-primary control-button" (mousedown)="zoom($event)" (mouseup)="zoomEnd($event)">
+                    <span style="font-size: 30px;font-weight: 900;">
+                    +
+                    </span>
+                </button>
+                <button type="button" class="btn btn-primary control-button" (mousedown)="unzoom($event)" (mouseup)="zoomEnd($event)">
+                    <span style="font-size: 30px;font-weight: 900;">
+                    -
+                    </span>
+                </button>
 			</div>
 			<div class = "control control-cluster">
 				<h4>Camera Controls</h4>

@@ -18,7 +18,7 @@ export class CameraService {
   }
 
   send(msg){
-    this.messages.next({part1:msg, part2:{}});
+    this.messages.next({part1:msg});
   }
 
   sendData(msg, data){
