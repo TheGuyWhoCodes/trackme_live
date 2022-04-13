@@ -13,7 +13,7 @@ import asyncio
 import platform
 import subprocess
 if platform.system() == 'Windows':
-	import winrt.windows.devices.enumeration as windows_devices
+	import winsdk.windows.devices.enumeration as windows_devices
 
 from threading import Thread
 	
