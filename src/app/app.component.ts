@@ -176,7 +176,7 @@ export class AppComponent {
             this.directionStatic = "right";
         }
 
-        this.camera.sendData('change_state',{'direction': 'this.directionStatic' }); /* uncomment for testing with the camera */
+        this.camera.sendData('change_state',{'direction': this.directionStatic }); /* uncomment for testing with the camera */
         //console.log(this.directionStatic); /* this is for debugging and can be deleted */
    }
 
