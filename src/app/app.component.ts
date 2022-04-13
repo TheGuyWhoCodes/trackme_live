@@ -5,7 +5,6 @@ import {CameraService} from './camera.service';
 import { Socket } from 'ngx-socket-io';
 import { cpuUsage } from 'process';
 import * as io from 'socket.io-client';
-import { Options, ChangeContext } from '@angular-slider/ngx-slider';
 import { JoystickEvent, NgxJoystickComponent } from 'ngx-joystick';
 import { JoystickManagerOptions, JoystickOutputData } from 'nipplejs';
 import { interval, Subscription } from 'rxjs';
@@ -20,11 +19,6 @@ import { interval, Subscription } from 'rxjs';
   })
 
 export class AppComponent {
-    value: number = 0;
-    options: Options = {
-        floor: 0,
-        ceil: 10 
-    };
 	title = 'trackme-webui';
 	key = ""
 	comPort = null
