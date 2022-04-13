@@ -474,10 +474,12 @@ class D100(Camera):
         :rtype: bool
         """
         return self.comm('8101046308FF')
-    def zoom(self, amount):
-        m = ['0000', '08D0', '1194', '1A58', '2610', '31D4', '34BC', '37A4', '3A98', '3D8C', '4000']
-        #b = 100 / len(m) # amount is between 0 and 100
-        #amount = amount // b
-        t = m[amount]
-        p, q, r, s = t[0], t[1], t[2], t[3]
-        return self.comm('8x0104470' + p + q + r + s + 'FF')
+
+    def zoom(self):
+        return self.comm('8101040724FF')
+
+    def unzoom(self):
+        return self.comm('8101040734FF')
+
+    def end_zoom(self):
+        return self.comm('8101040700FF')

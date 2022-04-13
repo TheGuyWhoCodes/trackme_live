@@ -151,7 +151,7 @@ export class AppComponent {
 
     onStartStatic(event: JoystickEvent) {
         /* the interval time can be changed depending on whether the joystick is too sensitive or not responsive enough */
-        this.sub = interval(100).subscribe((val) => { this.sendDirectionStatic() });
+        this.sub = interval(250).subscribe((val) => { this.sendDirectionStatic() });
     }
     
    sendDirectionStatic() {
@@ -191,9 +191,16 @@ export class AppComponent {
         this.staticOutputData = event.data;
     }
 
-    zoomValueChange(changeContext: ChangeContext)  {
-        console.log(changeContext)
-        this.camera.sendData('zoom', {'amount' : changeContext});
+    zoom(event: MouseEvent){
+        this.camera.send('zoom')
+    }
+
+    unzoom(event: MouseEvent){
+        this.camera.send('unzoom')
+    }
+
+    zoomEnd(event: MouseEvent){
+        this.camera.send('end_zoom')
     }
 
 	public toggleDebugMode(value:boolean){

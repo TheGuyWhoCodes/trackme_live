@@ -142,13 +142,34 @@ def get_active_video_and_com_port():
 	send_active_video_and_com_port()
 
 @socketio.on('zoom')
-def set_zoom_amount(message):
-    print('[INFO] Web client {}: Command = change_state => {}'.format(request.sid, message))
+def zoom():
+    print('[INFO] Zooming')
     if camera.Connection == None:
             socketio.emit('server2web',{ 'text':'Unable to zoom camera, not initalized'}, namespace='/web')
             return
-    camera.Connection.zoom(message['amount'])
-    socketio.emit('zoom', { 'text':'Command = zoom => {}'.format(message)})
+    socketio.emit('zoom')
+    camera.Connection.zoom()
+
+@socketio.on('unzoom')
+def unzoom():
+    print('[INFO] Unzooming')
+    if camera.Connection == None:
+            socketio.emit('server2web',{ 'text':'Unable to unzoom camera, not initalized'}, namespace='/web')
+            return
+    socketio.emit('unzoom')
+    camera.Connection.unzoom()
+
+
+@socketio.on('end_zoom')
+def end_zoom():
+    print('[INFO] End Zoom')
+    if camera.Connection == None:
+            socketio.emit('server2web',{ 'text':'Unable to end_zoom camera, not initalized'}, namespace='/web')
+            return
+    socketio.emit('end_zoom')
+    camera.Connection.end_zoom()
+
+
 
 @socketio.on('get_available_video_ports_and_camera_names')
 def get_available_video_ports_and_camera_names():
