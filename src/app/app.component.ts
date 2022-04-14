@@ -5,6 +5,8 @@ import {CameraService} from './camera.service';
 import { Socket } from 'ngx-socket-io';
 import { cpuUsage } from 'process';
 import * as io from 'socket.io-client';
+import { JoystickEvent } from 'ngx-joystick';
+import { JoystickManagerOptions, JoystickOutputData } from 'nipplejs';
 
 @Component({
   selector: 'app-root',
@@ -33,6 +35,14 @@ export class AppComponent {
 		camera:'',
 		com:''
 	});
+
+
+	staticOptions: JoystickManagerOptions = {
+		mode: 'static',
+		position: { left: '50%', top: '50%' },
+		color: 'blue',
+	  };
+	
 
 	@ViewChild('debugArea') debugArea: ElementRef;
 	constructor(private modalService: NgbModal, private camera: CameraService, private formBuilder: FormBuilder) {}
@@ -111,6 +121,37 @@ export class AppComponent {
 	close_alert() {
 		this.camera_error = false
 	}
+
+	onMoveStatic(event: JoystickEvent) {
+		if(event.data.distance > 10) {
+			console.log(event.data.direction.angle, event.data.angle.degree )
+			if((event.data.direction.angle == "down" || event.data.direction.angle == "left") && event.data.angle.degree > 200 && event.data.angle.degree < 240) {
+				this.camera.direction('downleft')
+			} else if((event.data.direction.angle == "up" || event.data.direction.angle == "left") && event.data.angle.degree > 110 && event.data.angle.degree < 150) {
+				this.camera.direction('upleft')
+			} else if((event.data.direction.angle == "up" || event.data.direction.angle == "right") && event.data.angle.degree > 20 && event.data.angle.degree < 70) {
+				this.camera.direction('upright')
+			} else if((event.data.direction.angle == "down" || event.data.direction.angle == "right") && event.data.angle.degree > 300 && event.data.angle.degree < 340) {
+				this.camera.direction('downright')
+			}
+			else if(event.data.direction.angle == "down") {
+				this.camera.direction('down')
+			} else if(event.data.direction.angle == "up") {
+				this.camera.direction('up')
+			} else if(event.data.direction.angle == "left") {
+				this.camera.direction('left')
+			} else if(event.data.direction.angle == "right") {
+				this.camera.direction('right')
+			}
+		} else {
+			this.camera.direction('stop')		
+		}
+	}
+
+	onEndStatic(event: JoystickEvent) {
+		this.camera.direction('stop')		
+	}
+
 
 	connectToCamera() : void  {
 		console.log("Connecting to camera using: ", this.cameraSelectForm.value)

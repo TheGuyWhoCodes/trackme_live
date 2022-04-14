@@ -89,8 +89,14 @@
 			</div>
 			<div class = "control joystick">
 				<h4>JoyStick Control</h4>
-				joystick should go here
-
+                <div class="mycontainer mynoselect"> 
+                    <div class="myzone">
+						<ngx-joystick #staticJoystic
+                        [options]="staticOptions"
+                        (end)="onEndStatic($event)"
+                        (move)="onMoveStatic($event)"
+                        ></ngx-joystick>
+                    </div>
 			</div>
 			<div class = "control zoom">
 				<h4>Zoom Control</h4>
