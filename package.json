@@ -22,6 +22,7 @@
     "@angular/router": "~9.1.4",
     "@ng-bootstrap/ng-bootstrap": "^6.0.0",
     "bootstrap": "^4.4.0",
+    "ngx-joystick": "^0.1.1",
     "ngx-socket-io": "^4.1.0",
     "rxjs": "~6.5.4",
     "rxjs-compat": "^6.6.7",
